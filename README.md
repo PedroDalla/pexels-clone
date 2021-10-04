@@ -1,2 +1,2 @@
 # pexels-clone
-A Pexels Clone made for study purposes
+A Pexels Clone made for study purposes with React.js.
