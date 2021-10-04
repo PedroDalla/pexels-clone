@@ -6,12 +6,13 @@ import { GiHamburgerMenu } from 'react-icons/gi'
 import { AuthSettings } from '../AuthSettings'
 
 interface NavProps {
-    searchBarEnabled?: boolean
+    searchBarEnabled?: boolean,
+    transparentBackground?: boolean;
 }
 
 export const Nav = ({searchBarEnabled}: NavProps): JSX.Element => {
     return (
-        <StyledNav>
+        <StyledNav transparentBackground>
             <a href='/'>
             <svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 0 32 32">
                 <path d="M2 0h28a2 2 0 0 1 2 2v28a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2z" fill="#05A081"></path>
@@ -19,7 +20,7 @@ export const Nav = ({searchBarEnabled}: NavProps): JSX.Element => {
             </svg>
             <span>Pexels</span>
             </a>
-            {searchBarEnabled? <SearchBar></SearchBar> : null}
+            {searchBarEnabled? <SearchBar navSearchBar></SearchBar> : null}
             <ul>
                 <li id='explore-a-li'>
                     <a href='/explore/'>

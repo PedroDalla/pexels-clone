@@ -1,11 +1,13 @@
 import React from 'react';
 
 import {Nav} from './components/Nav'
+import {Hero} from './components/Hero'
 
 function App() {
   return (
     <>
-      <Nav searchBarEnabled></Nav>
+      <Nav searchBarEnabled={false} transparentBackground></Nav>
+      <Hero></Hero>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-export const StyledSearchBar = styled.div<{ navSearchBar: boolean }>`
-  margin-right: 1.9rem;
+export const StyledSearchBar = styled.div<{ navSearchBar?: boolean, margin?: string }>`
+  margin: ${({margin}) => margin? margin : '0 1.9rem 0 0'};
   max-width: 750px;
   width: 100%;
   border-radius: 6px;

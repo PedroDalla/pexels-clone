@@ -13,16 +13,19 @@ export const StyledNav = styled.nav<{ transparentBackground?: boolean }>`
   display: flex;
   align-items: center;
 
-  background-color: ${({ transparentBackground }) =>
-    transparentBackground ? "rgba(0,0,0,100)" : "#232a34"};
+  z-index: 10;
+
+  background: ${({ transparentBackground }) =>
+    transparentBackground ? "transparent" : "#232a34"};
   a {
     display: flex;
     align-items: center;
     text-decoration: none;
     color: white;
+    transition: .2s ease;
 
     &:hover {
-      color: rgba(255, 255, 255, 0.85);
+      opacity: .7;
     }
   }
   > a {
@@ -86,9 +89,11 @@ export const StyledNav = styled.nav<{ transparentBackground?: boolean }>`
         border-radius: 4px;
         padding: 0.7rem 2rem;
         margin-right: -2.5rem;
+        transition: 0.2s ease;
 
         &:hover {
-          background: rgba(5, 160, 129, 0.85);
+          opacity: .7;
+          transform: translateY(-2px);
         }
       }
 
