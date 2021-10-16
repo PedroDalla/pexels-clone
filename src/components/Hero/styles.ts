@@ -1,12 +1,9 @@
 import styled from "styled-components";
 
-export const StyledHero = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
+export const StyledHero = styled.header`
+  position: relative;
 
-  width: 100vw;
+  width: 100%;
   height: 100%;
   min-height: 380px;
   max-height: 500px;
@@ -21,6 +18,7 @@ export const StyledHero = styled.div`
     position: absolute;
     inset: 0;
     z-index: -3;
+    overflow: hidden;
 
     > img {
       height: 100%;
