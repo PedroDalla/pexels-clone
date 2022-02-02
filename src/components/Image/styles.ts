@@ -4,6 +4,11 @@ export const StyledImage = styled.div`
   position: relative;
   min-width: 200px;
   max-width: 430px;
+
+  @media (max-width: 500px) {
+      min-width: 50px;
+    }
+
   border-radius: 6px;
   > img {
       width: 100%;  
