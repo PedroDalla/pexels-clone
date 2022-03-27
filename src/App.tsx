@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { GlobalStyles } from './components/GlobalStyles/styles';
 import {Nav} from './components/Nav'
 import {Hero} from './components/Hero'
+import { Navigator } from './components/Navigator';
 import { ContentExplorer } from './components/ContentExplorer';
 
 
@@ -18,6 +19,7 @@ function App() {
       <GlobalStyles></GlobalStyles>
       <Nav searchBarEnabled={showNavSearchBar} transparentBackground={!showNavSearchBar}></Nav>
       <Hero></Hero>
+      <Navigator></Navigator>
       <ContentExplorer></ContentExplorer>
     </>
   );

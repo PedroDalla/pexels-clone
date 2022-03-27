@@ -12,8 +12,6 @@ export const ContentExplorer = ({ }: ContentExplorerAuthSettingsProps): JSX.Elem
     const [columnCount, setColumnCount] = useState(2)
     const pexelsInfo = usePexels()
 
-    console.log('render')
-
     let columns: Array<JSX.Element[]> = []
 
     if (pexelsInfo) {

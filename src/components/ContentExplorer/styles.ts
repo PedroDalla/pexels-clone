@@ -11,7 +11,7 @@ export const StyledContentExplorer = styled.div`
         justify-content: space-between;
         margin-bottom: 0.5rem;
         > span {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 500;
         }        
         
