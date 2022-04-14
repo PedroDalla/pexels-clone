@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { StyledContentExplorer } from './styles'
 import { Image } from '../Image/index'
 import { usePexels } from '../../hooks/usePexels'
@@ -7,21 +7,22 @@ interface ContentExplorerAuthSettingsProps {
 
 }
 
-
 export const ContentExplorer = ({ }: ContentExplorerAuthSettingsProps): JSX.Element => {
+    const element = useRef<HTMLDivElement>(null)
+
     const [columnCount, setColumnCount] = useState(2)
-    const pexelsInfo = usePexels()
+    const {photos, fetchPhotos} = usePexels()
 
     let columns: Array<JSX.Element[]> = []
 
-    if (pexelsInfo) {
-        pexelsInfo.photos.map((photo, i) => {
+    if (photos) {
+        photos.map((photo, i) => {
             let mod = i % columnCount
 
             if (columns[mod]) {
-                columns[mod].push(<Image imageInfo={photo} key={photo.id}></Image>)
+                columns[mod].push(<Image imageInfo={photo} ></Image>)
             } else {
-                columns[mod] = [<Image imageInfo={photo} key={photo.id}></Image>]
+                columns[mod] = [<Image imageInfo={photo} ></Image>]
             }
         })
     }
@@ -44,6 +45,15 @@ export const ContentExplorer = ({ }: ContentExplorerAuthSettingsProps): JSX.Elem
             calculateColumns()
         }
 
+        //Adding event listener to fetch more photos upon scrolling down the page
+        window.onscroll =  () => {
+            if(element.current){
+                if(window.scrollY > element.current.scrollHeight / 2) {
+                    //fetchPhotos(10)
+                }
+            }
+        }
+
         calculateColumns()
     }, [])
 
@@ -52,7 +62,7 @@ export const ContentExplorer = ({ }: ContentExplorerAuthSettingsProps): JSX.Elem
             <div id='explorer-header'>
                 <span>Free Stock Photos</span>
             </div>
-            <div id='explorer-main'>
+            <div id='explorer-main' ref={element}>
                 {
                     columns.map((column, index) =>
                         <div key={index} className='explorer-column'>

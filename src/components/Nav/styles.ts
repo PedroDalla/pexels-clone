@@ -53,7 +53,6 @@ export const StyledNav = styled.nav<{ transparentBackground?: boolean }>`
 
   > ul {
     font-family: "Roboto";
-    font-weight: 400;
     display: flex;
     list-style: none;
     margin: 0;

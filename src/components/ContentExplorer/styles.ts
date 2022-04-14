@@ -12,7 +12,7 @@ export const StyledContentExplorer = styled.div`
         margin-bottom: 0.5rem;
         > span {
             font-size: 18px;
-            font-weight: 500;
+            font-weight: 400;
         }        
         
     }

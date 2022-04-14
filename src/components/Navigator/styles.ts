@@ -4,7 +4,7 @@ export const StyledNavigator = styled.div`
     display: flex;
     justify-content: center;
 
-    border-bottom: 2px solid rgba(0,0,0,10%);  
+    border-bottom: 1px solid rgba(0,0,0,10%);  
 
     > ul{
         margin: 5px 0 0 0;

@@ -5,6 +5,8 @@ export const StyledImage = styled.div`
   min-width: 200px;
   max-width: 430px;
 
+  cursor: pointer;
+
   @media (max-width: 500px) {
       min-width: 50px;
     }
@@ -34,14 +36,19 @@ export const StyledImage = styled.div`
       opacity: 0;
       display: flex;
       justify-content: space-between;
-      padding: 10px;
+      padding: 10px 15px 15px 15px;
+
+      font-family: Roboto;
+      font-weight: 400;
+      font-size: 14px;
+      
       
       #author-link{
         display: flex;
         align-items: flex-end;
 
         > span {
-          color: white;
+          color: #e8e8e8;
         }
       }
 
@@ -49,9 +56,15 @@ export const StyledImage = styled.div`
         display: flex;
         align-items: flex-end;
         button{
+          color: #e8e8e8;
           background: transparent;
           outline: none;
           border: 0;
+          cursor: pointer;
+
+          &:hover{
+            color: white;
+          }
         }
       }
   }
