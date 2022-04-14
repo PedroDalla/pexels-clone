@@ -12,6 +12,7 @@ interface AuthSettingsProps{
 const StyledDiv = styled.div`
     min-width: 340px;
     margin: 0;
+    user-select: none;
 
     ul{
         list-style: none;
@@ -46,7 +47,6 @@ const StyledDiv = styled.div`
     }
 
     #media-links{
-        
 
         ul{
             list-style: none;

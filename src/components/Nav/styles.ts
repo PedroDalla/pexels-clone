@@ -15,6 +15,8 @@ export const StyledNav = styled.nav<{ transparentBackground?: boolean }>`
 
   z-index: 10;
 
+  user-select: none;
+
   background: ${({ transparentBackground }) =>
     transparentBackground ? "transparent" : "#232a34"};
   a {
