@@ -105,7 +105,7 @@ const tooltipContent = <StyledDiv>
 export const AuthSettings = ({}: AuthSettingsProps): JSX.Element => {
 
     return (
-        <Tooltip tooltipContent={tooltipContent} activateOn='click'>
+        <Tooltip tooltipContent={tooltipContent} activateOn='hover'>
             <StyledAuthSettings>
                 <IoPersonCircleSharp size='28px'></IoPersonCircleSharp>
                 <IoIosArrowDown size='24px'></IoIosArrowDown>

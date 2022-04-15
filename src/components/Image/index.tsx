@@ -18,9 +18,9 @@ export const Image = ({imageInfo} : ImageProps): JSX.Element => {
                     <span>{imageInfo.photographer}</span>
                 </a>
                 <div id='photo-buttons'>
-                    <button><HiDownload size='22px'></HiDownload></button>
-                    <button><AiOutlinePlusCircle  size='22px'></AiOutlinePlusCircle></button>
-                    <button><AiOutlineHeart size='22px'></AiOutlineHeart></button>
+                    <button><HiDownload size='24px'></HiDownload></button>
+                    <button><AiOutlinePlusCircle  size='24px'></AiOutlinePlusCircle></button>
+                    <button><AiOutlineHeart size='24px'></AiOutlineHeart></button>
                 </div>
             </div>
         </StyledImage>

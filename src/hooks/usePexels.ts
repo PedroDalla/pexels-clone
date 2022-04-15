@@ -1,15 +1,18 @@
 import axios from 'axios'
-import { useCallback, useEffect, useState } from 'react'
+import {useEffect, useState } from 'react'
 import {pexelsObject, Photo} from '../interfaces'
 
 export function usePexels(){
     const [photos, setPhotos] = useState<Photo[]>([]);
     const [pagination, setPagination] = useState(1)
+    const [fetching, setFetching] = useState(false)
 
-  
-
-    let getPhotos = useCallback(async (photosPerPage = 30) => {
+    let getPhotos = async (photosPerPage = 30) => {
+        if(fetching){
+            return
+        }
         let photosRequest: any
+        setFetching(true)
         try{
             photosRequest = await axios.get<pexelsObject>(`https://api.pexels.com/v1/curated/?page=${pagination}&per_page=${photosPerPage}`, {
                 headers: {
@@ -23,14 +26,17 @@ export function usePexels(){
             console.error(err)
         }
         if(photosRequest){
-            setPhotos(current => [...current, ...photosRequest.data.photos])
-            setPagination(current => current + 1)
+             setPhotos(current => [...current, ...photosRequest.data.photos])
+             setPagination(current => current + 1)
+             setFetching(false)
+             
         }
-    }, [pagination])
+    }
 
     useEffect(() => {
         getPhotos()
-    }, [])
+        //eslint-disable-next-line
+    }, []) 
 
 
     return {

@@ -1,10 +1,6 @@
 import { StyledNavigator } from "./styles"
 
-interface NavigatorProps{
-
-}
-
-export const Navigator = ({}: NavigatorProps) : JSX.Element => {
+export const Navigator = () : JSX.Element => {
     return <StyledNavigator>
         <ul>
             <li className='selected'>Home</li>

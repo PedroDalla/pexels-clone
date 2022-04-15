@@ -5,6 +5,7 @@ import {Nav} from './components/Nav'
 import {Hero} from './components/Hero'
 import { Navigator } from './components/Navigator';
 import { ContentExplorer } from './components/ContentExplorer';
+import { ContentVisualizer } from './components/ContentVisualizer';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
       <Hero></Hero>
       <Navigator></Navigator>
       <ContentExplorer></ContentExplorer>
+      
     </>
   );
 }

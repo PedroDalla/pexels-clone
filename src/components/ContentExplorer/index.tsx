@@ -48,14 +48,15 @@ export const ContentExplorer = ({ }: ContentExplorerAuthSettingsProps): JSX.Elem
         //Adding event listener to fetch more photos upon scrolling down the page
         window.onscroll =  () => {
             if(element.current){
-                if(window.scrollY > element.current.scrollHeight / 2) {
-                    //fetchPhotos(10)
+                debugger
+                if(window.scrollY > element.current.scrollHeight - 1500) {
+                    fetchPhotos(10)
                 }
             }
         }
 
         calculateColumns()
-    }, [])
+    }, [fetchPhotos])
 
     return (
         <StyledContentExplorer>

@@ -15,6 +15,10 @@ export const GlobalStyles = createGlobalStyle`
         height: 100%;
     }
     
+    body{
+        //overflow-y: hidden;
+    }
+
     #root{
         height: 100%;
     }

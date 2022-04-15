@@ -1,8 +1,7 @@
 import { usePopper } from "react-popper"
 import React, {useRef, useState } from 'react'
 import { StyledTooltip } from "./styles"
-
-
+import { detectClickOutside } from "../../utils/detectClickOutside"
 
 interface TooltipProps extends React.HTMLProps<HTMLDivElement> {
     tooltipContent: React.ReactNode,
@@ -23,24 +22,12 @@ export const Tooltip = ({ children, tooltipContent, activateOn, delay = 250 }: T
 
     let timeout = useRef<any>()
 
-    const detectClickOutside = (ref: React.MutableRefObject<any>, callback: Function) => {
-        function handleClickOutside(ev: MouseEvent){
-            if(ref.current && !ref.current.contains(ev.target)){
-                callback()
-                document.removeEventListener('click', handleClickOutside)
-            }
-        }
-        document.addEventListener('click', handleClickOutside)
-    }
-
     const show = () => {
         if(timeout.current) clearTimeout(timeout.current)
         setVisible(true)
         detectClickOutside(tooltipRefElement, () => {
             setVisible(false)
         })
-        
-
     }
 
     const hide = () => {
@@ -65,17 +52,16 @@ export const Tooltip = ({ children, tooltipContent, activateOn, delay = 250 }: T
 
     return (
         <StyledTooltip visible={visible} ref={tooltipRefElement}>
-            <div ref={ref => setReferenceElement(ref)} {...(activateOn == 'hover'? {onMouseEnter: show, onMouseLeave: hide} : {onClick: toggle})}>
+            <div ref={ref => setReferenceElement(ref)} {...(activateOn === 'hover'? {onMouseEnter: show, onMouseLeave: hide} : {onClick: toggle})}>
                 {children}
             </div>
             {visible &&
-                <div id='tooltip-main' ref={ref => setPopperElement(ref)} style={styles.popper} {...attributes.popper} tabIndex={0} {...(activateOn == 'hover' && {onMouseEnter: show, onMouseLeave: hide})}>
+                <div id='tooltip-main' ref={ref => setPopperElement(ref)} style={styles.popper} {...attributes.popper} tabIndex={0} {...(activateOn === 'hover' && {onMouseEnter: show, onMouseLeave: hide})}>
                     {tooltipContent}
                     <div id='tooltip-arrow' ref={ref => setArrowElement(ref)} style={styles.arrow}></div>
                 </div>
 
             }
-
         </StyledTooltip>
 
     )
