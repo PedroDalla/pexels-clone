@@ -6,12 +6,15 @@ import { AiOutlineHeart, AiOutlinePlusCircle } from 'react-icons/ai'
 import { Photo } from '../../interfaces'
 
 interface ImageProps{
-    imageInfo: Photo
+    imageInfo: Photo,
+    setContent: Function
 }
 
-export const Image = ({imageInfo} : ImageProps): JSX.Element => {
+export const Image = ({imageInfo, setContent} : ImageProps): JSX.Element => {
     return (
-        <StyledImage>
+        <StyledImage onClick={() => {
+            setContent(imageInfo)
+        }}>
             <img src={imageInfo.src.large}></img>
             <div id='photo-controls'>
                 <a id='author-link'>

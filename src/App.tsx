@@ -1,29 +1,27 @@
-import { useState } from 'react';
-
 import { GlobalStyles } from './components/GlobalStyles/styles';
-import {Nav} from './components/Nav'
-import {Hero} from './components/Hero'
-import { Navigator } from './components/Navigator';
-import { ContentExplorer } from './components/ContentExplorer';
-import { ContentVisualizer } from './components/ContentVisualizer';
+import { Home } from './pages/Home';
+import { Join } from './pages/Join'
+import { Login } from './pages/Login';
 
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
+import { AuthContextProvider } from './contexts/AuthContext';
 
 function App() {
-  const [showNavSearchBar, setShowNavSearchBar] = useState(false) 
-
-  window.addEventListener('scroll', () => {
-    setShowNavSearchBar(window.scrollY > 160)
-  })
-
   return (
-    <>
-      <GlobalStyles></GlobalStyles>
-      <Nav searchBarEnabled={showNavSearchBar} transparentBackground={!showNavSearchBar}></Nav>
-      <Hero></Hero>
-      <Navigator></Navigator>
-      <ContentExplorer></ContentExplorer>
-      
-    </>
+    <BrowserRouter>
+      <AuthContextProvider>
+        <GlobalStyles></GlobalStyles>
+        <Routes>
+          <Route index element={<Home/>}/>
+          <Route path="/join" element={<Join/>}/>
+          <Route path="/login" element={<Login/>}/>
+        </Routes>
+      </AuthContextProvider>
+    </BrowserRouter>
   );
 }
 

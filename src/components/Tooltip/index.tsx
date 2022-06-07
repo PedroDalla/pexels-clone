@@ -3,7 +3,7 @@ import React, {useRef, useState } from 'react'
 import { StyledTooltip } from "./styles"
 import { detectClickOutside } from "../../utils/detectClickOutside"
 
-interface TooltipProps extends React.HTMLProps<HTMLDivElement> {
+interface TooltipProps extends React.ComponentPropsWithoutRef<"div"> {
     tooltipContent: React.ReactNode,
     activateOn: 'hover' | 'click',
     delay?: number

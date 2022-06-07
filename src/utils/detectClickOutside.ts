@@ -5,5 +5,5 @@ export const detectClickOutside = (ref: React.MutableRefObject<any>, callback: F
                 document.removeEventListener('click', handleClickOutside)
             }
         }
-        document.addEventListener('click', handleClickOutside)
+        setTimeout(() => document.addEventListener('click', handleClickOutside), 0)
 }

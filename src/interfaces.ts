@@ -19,6 +19,42 @@ export interface Photo{
     width: number
 }
 
+interface VideoPicture{
+    id: number,
+    picture: string,
+    nr: number
+}
+
+interface VideoFile{
+    id: number,
+    quality: string,
+    file_type: string,
+    width: number,
+    height: number,
+    link: string
+}
+export interface Video{
+        id: number,
+        width: number,
+        height: number,
+        url: string,
+        image: string,
+        full_res: null,
+        tags: [],
+        duration: number,
+        user: {
+          id: number,
+          name: string,
+          url: string
+        },
+        video_files: VideoFile[],
+        video_pictures: VideoPicture[]
+}
+
+export function isPhoto(content: Photo | Video): content is Photo {
+    return (content as Photo).src !== undefined;
+}
+
 export interface pexelsObject{
     url?: string;
     page: number;

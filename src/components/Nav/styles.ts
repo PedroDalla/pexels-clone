@@ -30,28 +30,6 @@ export const StyledNav = styled.nav<{ transparentBackground?: boolean }>`
       opacity: .7;
     }
   }
-  > a {
-    margin-right: 2.15rem;
-    @media (max-width: 1000px) {
-      margin-right: 1rem;
-    }
-
-    > svg {
-      height: 40px;
-      width: 40px;
-      border-radius: 8px;
-    }
-    > span {
-      margin-left: 1rem;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-
-      @media (max-width: 1000px) {
-        display: none;
-      }
-    }
-  }
 
   > ul {
     font-family: "Roboto";
@@ -63,7 +41,7 @@ export const StyledNav = styled.nav<{ transparentBackground?: boolean }>`
     font-size: 17px;
     padding: 0;
 
-    li {
+    > li {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -83,13 +61,13 @@ export const StyledNav = styled.nav<{ transparentBackground?: boolean }>`
         }
       }
 
-      #upload-a {
+      #main-a {
         background: #05a081;
         border: 0;
         outline: 0;
         border-radius: 4px;
         padding: 0.7rem 2rem;
-        margin-right: -2.5rem;
+        margin-right: -3.5rem;
         transition: 0.2s ease;
 
         &:hover {
@@ -111,7 +89,8 @@ export const StyledNav = styled.nav<{ transparentBackground?: boolean }>`
 
     @media (max-width: 1000px) {
       #explore-a-li,
-      #license-a-li {
+      #license-a-li,
+      #about-a-li  {
         display: none;
       }
     }
@@ -119,7 +98,7 @@ export const StyledNav = styled.nav<{ transparentBackground?: boolean }>`
     @media (max-width: 850px) {
       margin-right: 1rem;
 
-      #upload-a-li,
+      #main-a-li,
       #auth-li {
         display: none;
       }
