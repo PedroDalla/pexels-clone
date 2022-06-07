@@ -1,12 +1,12 @@
 import { UserInfo } from "firebase/auth";
-import { createContext, useEffect, useState, useContext} from "react";
+import { createContext, useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, database, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '../services/firebase'
 
 
 type User = UserInfo | undefined
 
-interface AuthContext{
+export interface AuthContext {
     user: User,
     functions: {
         LoginWithGoogle: () => void,
@@ -20,17 +20,10 @@ interface AuthContext{
 const AuthContext = createContext<AuthContext>({} as AuthContext)
 
 
-interface AuthContextProviderProps extends React.ComponentPropsWithoutRef<'div'>{
-
-}
-
-
-
-
-export const AuthContextProvider = ({children}: AuthContextProviderProps): JSX.Element => {
+export const AuthContextProvider: React.FC = ({ children }) => {
     const [user, setUser] = useState<User>()
     const navigate = useNavigate()
-    
+
     const LoginWithGoogle = () => {
         signInWithPopup(auth, new GoogleAuthProvider()).then((result) => {
             setUser(result.user)
@@ -61,7 +54,7 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps): JSX.E
     const Login = async (email: string, password: string): Promise<boolean> => {
         try {
             let result = await signInWithEmailAndPassword(auth, email, password)
-            if(result.user){
+            if (result.user) {
                 setUser(result.user)
                 return true
             } else {
@@ -88,7 +81,7 @@ export const AuthContextProvider = ({children}: AuthContextProviderProps): JSX.E
     }, [user])
 
     return (
-        <AuthContext.Provider value={{user, functions: {LoginWithGoogle, LoginWithFacebook, CreateAccount, Login, Logout}}}>
+        <AuthContext.Provider value={{ user, functions: { LoginWithGoogle, LoginWithFacebook, CreateAccount, Login, Logout } }}>
             {children}
         </AuthContext.Provider>
     )
