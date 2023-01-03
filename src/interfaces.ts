@@ -1,4 +1,4 @@
-export interface Photo{
+export interface Photo {
     avg_color: string,
     height: number,
     id: number,
@@ -6,6 +6,7 @@ export interface Photo{
     photographer: string,
     photographer_id: number,
     photographer_url: string,
+    photographer_photo: string,
     src: {
         landscape?: string,
         large: string,
@@ -19,13 +20,28 @@ export interface Photo{
     width: number
 }
 
-interface VideoPicture{
+export interface IUser {
+    displayName: string | null,
+    email: string | null,
+    phoneNumber: string | null,
+    uid: string,
+    photoURL: string | null,
+    gallery: string[],
+    collections: string[],
+    followers: string[],
+    following: string[],
+    views: number,
+    totalFollowers: number,
+    totalFollowing: number,
+}
+
+interface VideoPicture {
     id: number,
     picture: string,
     nr: number
 }
 
-interface VideoFile{
+interface VideoFile {
     id: number,
     quality: string,
     file_type: string,
@@ -33,29 +49,41 @@ interface VideoFile{
     height: number,
     link: string
 }
-export interface Video{
+export interface Video {
+    id: number,
+    photographer: string,
+    photographer_id: number,
+    photographer_url: string,
+    photographer_photo: string,
+    width: number,
+    height: number,
+    url: string,
+    image: string,
+    full_res: null,
+    tags: [],
+    duration: number,
+    user: {
         id: number,
-        width: number,
-        height: number,
-        url: string,
-        image: string,
-        full_res: null,
-        tags: [],
-        duration: number,
-        user: {
-          id: number,
-          name: string,
-          url: string
-        },
-        video_files: VideoFile[],
-        video_pictures: VideoPicture[]
+        name: string,
+        url: string
+    },
+    video_files: VideoFile[],
+    video_pictures: VideoPicture[]
+}
+
+export interface Collection {
+    id: number,
+    title: string,
+    content: string[],
+    count: number,
+    author: string,
 }
 
 export function isPhoto(content: Photo | Video): content is Photo {
     return (content as Photo).src !== undefined;
 }
 
-export interface pexelsObject{
+export interface pexelsObject {
     url?: string;
     page: number;
     per_page: number;

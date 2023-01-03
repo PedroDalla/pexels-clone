@@ -1,7 +1,8 @@
 import styled from "styled-components";
 
 export const StyledContentExplorer = styled.div`
-    width: fit-content;
+    width: 100%;
+    max-width: 1500px;
     margin: auto;
     margin-top: 1rem;
     padding: 0 1.5rem;
@@ -9,23 +10,27 @@ export const StyledContentExplorer = styled.div`
     #explorer-header{
         display: flex;
         justify-content: space-between;
-        margin-bottom: 0.5rem;
+        margin-bottom: 45px;
         > span {
-            font-size: 18px;
-            font-weight: 400;
-        }        
-        
+            font-size: 24px;
+            font-weight: 500;
+            font-family: "Poppins"
+        }   
     }
 
     #explorer-main{
         display: flex;
+
+        .explorer-column{
+            flex: 1;
+        }
         .explorer-column:not(:last-child){
-            margin-right: 1.3rem;
+            margin-right: 30px;
         }
 
         .explorer-column {
-            div:not(:first-child) {
-                margin-top: 1.3rem;
+            > div:not(:first-child) {
+                margin-top: 30px;
             }
         }
     }

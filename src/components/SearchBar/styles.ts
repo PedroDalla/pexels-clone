@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-export const StyledSearchBar = styled.div<{ navSearchBar?: boolean, margin?: string }>`
-  margin: ${({margin}) => margin? margin : '0 1.9rem 0 0'};
-  max-width: 750px;
+export const StyledSearchBar = styled.div<{ navSearchBar?: boolean, margin?: string, maxWidth?: number }>`
+  margin: ${({ margin }) => margin ? margin : '0 1.9rem 0 0'};
+  max-width: ${({ maxWidth }) => maxWidth ? maxWidth : 'none'};
   width: 100%;
   border-radius: 6px;
 
@@ -16,17 +16,17 @@ export const StyledSearchBar = styled.div<{ navSearchBar?: boolean, margin?: str
     color: #1a1a1a;
     width: 100%;
     border-radius: 6px;
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: #F7F7F7;
 
     input {
       min-width: 0;
-      padding: 0;
       border: none;
       outline: none;
-      padding: ${({ navSearchBar }) => (navSearchBar ? ".7rem 1rem" : "1rem")};
+      padding: ${({ navSearchBar }) => (navSearchBar ? ".9rem 1.2rem" : "1rem")};
       font-family: "Roboto", sans-serif;
-      font-weight: 300;
-      font-size: 17px;
+      font-weight: 400;
+      font-size: 18px;
+      
       appearance: textfield;
       flex: 1;
       background: transparent;

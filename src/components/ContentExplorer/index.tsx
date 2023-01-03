@@ -10,16 +10,16 @@ export const ContentExplorer = (): JSX.Element => {
     const element = useRef<HTMLDivElement>(null)
 
     const [columnCount, setColumnCount] = useState(2)
-    const [currentContent, setCurrentContent] = useState<Photo|Video|null>() 
-    const {photos, fetchPhotos} = usePexels()
+    const [currentContent, setCurrentContent] = useState<Photo | Video | null>()
+    const { photos, fetchPhotos } = usePexels()
 
     let columns: Array<JSX.Element[]> = []
 
-    function setContent(content: Photo|Video){
+    function setContent(content: Photo | Video) {
         setCurrentContent(content)
     }
 
-    function hideContentVisualizer(){
+    function hideContentVisualizer() {
         setCurrentContent(null)
     }
 
@@ -35,18 +35,20 @@ export const ContentExplorer = (): JSX.Element => {
         })
     }
 
-  
+
 
     //Only run on startup
     useEffect(() => {
-        function calculateColumns(){
+        function calculateColumns() {
             let colNumber: number;
-            if (window.innerWidth >= 1900) {
-                colNumber = 4;
+            if (window.innerWidth >= 2200) {
+                colNumber = 4
             } else if (window.innerWidth >= 1050) {
                 colNumber = 3
+            } else if (window.innerWidth >= 650) {
+                colNumber = 2
             } else {
-                colNumber = 2;
+                colNumber = 1
             }
             setColumnCount(colNumber)
         }
@@ -56,9 +58,9 @@ export const ContentExplorer = (): JSX.Element => {
         }
 
         //Adding event listener to fetch more photos upon scrolling down the page
-        window.onscroll =  () => {
-            if(element.current){
-                if(window.scrollY > element.current.scrollHeight - 1500) {
+        window.onscroll = () => {
+            if (element.current) {
+                if (window.scrollY > element.current.scrollHeight - 1500) {
                     fetchPhotos(10)
                 }
             }

@@ -49,11 +49,16 @@ export const StyledHero = styled.header`
     > a {
       margin-right: 1rem;
       margin-bottom: 1rem;
-      color: white;
-      font-size: 12px;
-      font-family: 'Roboto', 'Poppins', sans-serif;
+      color: #dbdbdb;
+      font-size: 15px;
+      font-family: 'Poppins', sans-serif;
       text-decoration: none;
-      opacity: .5;
+      opacity: .7;
+      transition: opacity 0.2s ease-in;
+
+      >span{
+        color: #fff
+      }
 
       &:hover{
         opacity: 1;
@@ -73,6 +78,7 @@ export const StyledHero = styled.header`
 
     > h1{
       margin-top: 0;
+      font-weight: 500;
 
     }
   }

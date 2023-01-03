@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const StyledLogo = styled.a<{size: number}>`
+export const StyledLogo = styled.a<{ size: number }>`
     &:hover {
       opacity: .7;
     }
@@ -16,15 +16,15 @@ export const StyledLogo = styled.a<{size: number}>`
     }
 
     > svg {
-      height: ${({size}) => `${size}px`};
-      width: ${({size}) => `${size}px`};
+      height: ${({ size }) => `${size}px`};
+      width: ${({ size }) => `${size}px`};
       border-radius: 8px;
     }
     > span {
       margin-left: 1rem;
-      font-size: 18px;
+      font-size: 22px;
       font-family: "Poppins";
-      font-weight: 500;
+      font-weight: 400;
       display: flex;
       align-items: center;
 

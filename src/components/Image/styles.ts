@@ -2,14 +2,9 @@ import styled from "styled-components";
 
 export const StyledImage = styled.div`
   position: relative;
-  min-width: 200px;
-  max-width: 430px;
+  width: 100%;
 
   cursor: pointer;
-
-  @media (max-width: 500px) {
-      min-width: 50px;
-    }
 
   border-radius: 6px;
   > img {
@@ -24,13 +19,11 @@ export const StyledImage = styled.div`
   }
 
   #photo-controls {
-      content: '';
       position: absolute;
-      bottom: 0%;
+      top: 0;
       left: 0;
-      right: 0;
       background: linear-gradient(to top,rgba(0,0,0,0.5) 0%,transparent 100%);
-      height: 100px;
+      height: 100%;
       width: 100%;
       transition: opacity .2s;
       opacity: 0;
@@ -42,28 +35,67 @@ export const StyledImage = styled.div`
       font-weight: 400;
       font-size: 14px;
       
-      
-      #author-link{
-        display: flex;
-        align-items: flex-end;
+      .control-buttons{
+        button{
+          color: black;
+          background: white;
+          outline: none;
+          border: 0;
+          border-radius: 10px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 40px;
+          height: 40px;
+          cursor: pointer;
+          transition: all 0.2s ease-in;
 
-        > span {
-          color: #e8e8e8;
+          &:not(:first-child){
+            margin-left: 8px;
+          }
+
+          &:hover{
+            background-color: #e0e0e0;
+            transform: translateY(-1px);
+          }
         }
       }
 
-      #photo-buttons{
+      #controls-header{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
         display: flex;
-        align-items: flex-end;
-        button{
-          color: #e8e8e8;
-          background: transparent;
-          outline: none;
-          border: 0;
-          cursor: pointer;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 15px;
+      }
+      
+      #controls-footer{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 15px;
 
-          &:hover{
-            color: white;
+        #author-link{
+            color: #e8e8e8;
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+
+          > img, svg {
+            margin-right: 5px;
+          }
+
+          > span {
+            font-family: "Roboto";
+            font-size: 16px;
+            font-weight: 500;
           }
         }
       }

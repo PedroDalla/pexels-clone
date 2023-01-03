@@ -1,11 +1,9 @@
 import { StyledNavigator } from "./styles"
 
-export const Navigator = () : JSX.Element => {
+export const Navigator: React.FC = ({ children }): JSX.Element => {
     return <StyledNavigator>
         <ul>
-            <li className='selected'>Home</li>
-            <li>Discover</li>
-            <li>Videos</li>
+            {children}
         </ul>
     </StyledNavigator>
 }

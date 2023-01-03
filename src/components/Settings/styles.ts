@@ -4,6 +4,7 @@ export const StyledProfilePicture = styled.div`
   img{
     width: 28px;
     height: 28px;
+    border-radius: 50%;
   }
 
 `

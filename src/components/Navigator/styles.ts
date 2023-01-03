@@ -1,31 +1,36 @@
 import styled from 'styled-components'
 
 export const StyledNavigator = styled.div`
-    display: flex;
-    justify-content: center;
-
-    border-bottom: 1px solid rgba(0,0,0,10%);  
-
     > ul{
-        margin: 5px 0 0 0;
+        margin: 2rem 0;
         list-style: none;
         display: flex;
         flex-direction: row;
+        padding: 0;
         
         li {
-            margin: 0 6px;
+            margin: 0 4px;
             font-size: 17px;
-            padding: 16px;
             transition: .2s color ease;
             cursor: pointer;
+            padding: 12px 20px;
+            font-weight: 500;
+            color: #4a4a4a;
+            border: 1px solid transparent;
+            border-radius: 30px;
 
             &.selected{
-                border-bottom: 3px solid #0064f9;
-                color: #0064f9;
+                color: #fff;
+                background-color: black;
+
+                &:hover{
+                    color: #fff;
+                    background-color: #2c343e;
+                }
             }
 
             &:hover{
-                color: #0064f9;
+                color: black;
             }
         }
     }

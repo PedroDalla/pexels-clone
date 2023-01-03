@@ -4,13 +4,21 @@ import { IoPersonCircle } from 'react-icons/io5'
 import { Tooltip } from '../Tooltip'
 import { FaFacebook, FaTwitter, FaInstagram, FaPinterest, FaYoutube } from 'react-icons/fa'
 import { AuthContext, useAuth } from "../../contexts/AuthContext"
+import { useNavigate } from 'react-router-dom'
 
 const TooltipContent: React.FC<{ auth: AuthContext }> = ({ auth }) => {
+    const navigate = useNavigate()
+
     return <StyledTooltipContent>
         <ul id='options'>
-            {!auth.user && <>
-                <li><button>Login</button></li>
-                <li><button>Join</button></li>
+            {!auth.user ? <>
+                <li><button onClick={() => navigate('/login')}>Login</button></li>
+                <li><button onClick={() => navigate('/join')}>Join</button></li>
+            </> : <>
+                <li><button onClick={() => navigate('/profile', { state: { uid: auth.user?.uid } })}>Your Profile</button></li>
+                <li><button onClick={() => navigate('/profile')}>Your Collections</button></li>
+                <li><button onClick={() => navigate(`/settings`)}>Settings</button></li>
+                <li><button onClick={() => auth.functions.Logout()}>Logout</button></li>
             </>}
             <li><button>Change Language</button></li>
             <li><button>Image & Video API</button></li>
@@ -35,7 +43,7 @@ const TooltipContent: React.FC<{ auth: AuthContext }> = ({ auth }) => {
 const ProfilePicture: React.FC<{ auth: AuthContext }> = ({ auth }) => {
     return <StyledProfilePicture>
         {auth.user && auth.user.photoURL ?
-            <img src={auth.user.photoURL}></img>
+            <img alt="user" src={auth.user.photoURL} referrerPolicy="no-referrer"></img>
             :
             <IoPersonCircle size='28px' />
         }
