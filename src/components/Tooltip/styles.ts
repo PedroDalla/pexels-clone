@@ -1,19 +1,27 @@
 import styled from "styled-components"
 
-export const StyledTooltip = styled.div<{ visible: boolean }>`
+export const StyledTooltip = styled.div<{
+    visible: boolean, arrowOptions?: {
+        size?: number,
+        background?: string,
+        top?: number,
+        left?: number,
+        right?: number,
+        bottom?: number
+    }
+}>`
         
 
     #tooltip-main{
-        background: white;
-        border-radius: 2px;
-        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 25%);
-
         #tooltip-arrow, #tooltip-arrow::before{
-        background: inherit;
-        width: 8px;
-        height: 8px;
+        background: ${p => p.arrowOptions?.background || "white"};
+        width: ${p => p.arrowOptions?.size ? p.arrowOptions.size + "px" : "8px"};
+        height: ${p => p.arrowOptions?.size ? p.arrowOptions.size + "px" : "8px"};
         position: absolute;
-        top: -2px;
+        ${p => p.arrowOptions?.top ? `top: ${p.arrowOptions.top}px;` : ""}
+        ${p => p.arrowOptions?.left ? `left: ${p.arrowOptions.left}px;` : ""}
+        ${p => p.arrowOptions?.right ? `right: ${p.arrowOptions.right}px;` : ""}
+        ${p => p.arrowOptions?.bottom ? `bottom: ${p.arrowOptions.bottom}px;` : ""}
         }
 
         #tooltip-arrow{

@@ -13,10 +13,12 @@ export const StyledTooltipContent = styled.div`
     min-width: 340px;
     margin: 0;
     user-select: none;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 25%);
+    background: white;
 
     ul{
         list-style: none;
-        margin: 8px 0;
         padding: 0;
 
         li{

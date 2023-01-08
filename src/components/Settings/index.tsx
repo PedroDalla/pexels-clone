@@ -54,7 +54,7 @@ export const Settings: React.FC = () => {
     const auth = useAuth()
 
     return (
-        <Tooltip tooltipContent={<TooltipContent auth={auth} />} activateOn='hover'>
+        <Tooltip tooltipContent={<TooltipContent auth={auth} />} activateOn='hover' arrowOptions={{ top: -2 }}>
             <StyledAuthSettings>
                 {auth.user ? <ProfilePicture auth={auth} /> : <BsThreeDots size='28px' />}
             </StyledAuthSettings>

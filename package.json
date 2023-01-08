@@ -48,6 +48,6 @@
     ]
   },
   "devDependencies": {
-    "styled-components": "^5.3.1"
+    "styled-components": "^5.3.6"
   }
 }
