@@ -1,18 +1,44 @@
 import styled from "styled-components";
 import { GoPlus } from "react-icons/go"
 import { UploadFile } from "..";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsFillExclamationTriangleFill } from "react-icons/bs";
 import { Tooltip } from "../../../components/Tooltip";
+import { IoMdTrash } from "react-icons/io";
 
 const StyledFilesPanel = styled.div`
-    
+    display: flex;
+    gap: 80px;
+
+    @media (max-width: 900px){
+        flex-direction: column;
+    }
+    #image-card-container{
+    }
 `
 const StyledFileOutliner = styled.div`
     width: 90px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+
+    @media (max-width: 900px){
+        flex-direction: row;
+        width: auto;
+        height: 90px;
+
+        div.outline-container{
+            margin-bottom: 0;
+            
+            &:not(:last-child){
+                margin-right: 10px;
+            }
+        }
+    }
 
     .outline-container {
         height: 90px;
+        width: 90px;
         border: 3px solid transparent;
 
         margin-bottom: 10px;
@@ -78,8 +104,6 @@ const StyledFileOutliner = styled.div`
         }
     }
 `
-const StyledButton = styled.button<{ background: string }>`background-image: ${p => p.background || ""}`
-
 const StyledTooltip = styled.div`
     font-size: 16px;
     font-family: "Poppins";
@@ -89,18 +113,38 @@ const StyledTooltip = styled.div`
 
     color: white;
 `
+const StyledButton = styled.button<{ background: string }>`background-image: ${p => p.background || ""};`
 
-type FilesPanelProps = {
+type FileOutlinerProps = {
     files: UploadFile[],
-    handleUpload: () => void
+    handleUpload: () => void,
 }
 
-const FileOutliner: React.FC<FilesPanelProps> = ({ files, handleUpload }) => {
+const FileOutliner: React.FC<FileOutlinerProps> = ({ files, handleUpload }) => {
     const [selected, setSelected] = useState<number>(0)
+    const [mobile, setMobile] = useState(false)
 
     const handleClick = (index: number) => {
         setSelected(index)
     }
+
+    useEffect(() => {
+        window.addEventListener("resize", () => {
+            if (window.innerWidth > 900 && mobile) {
+                setMobile(false)
+            } else if (window.innerWidth <= 900 && !mobile) {
+                setMobile(true)
+            }
+        })
+
+        if (window.innerWidth > 900) {
+            setMobile(false)
+        } else if (window.innerWidth <= 900) {
+            setMobile(true)
+        }
+    }, [])
+
+    const tooltipArrowPosition = mobile ? { top: -3 } : { left: -3 }
 
     return <StyledFileOutliner>
         <div id="add-photo" className="outline-container">
@@ -108,7 +152,7 @@ const FileOutliner: React.FC<FilesPanelProps> = ({ files, handleUpload }) => {
         </div>
         {
             files.map((file, index) =>
-                <Tooltip tooltipContent={file.message ? <StyledTooltip>{file.message}</StyledTooltip> : null} activateOn="hover" activateIf={file.error} delay={100} placement="right" arrowOptions={{ left: -3, size: 14, background: "#D3405C" }}>
+                <Tooltip tooltipContent={file.message ? <StyledTooltip>{file.message}</StyledTooltip> : null} activateOn="hover" activateIf={file.error} delay={100} placement={!mobile ? "right" : "bottom-start"} arrowOptions={{ size: 14, background: "#D3405C", ...tooltipArrowPosition }}>
                     <div key={index} className={`outline-container ${file.error ? "error" : ""} ${index === selected ? "selected" : ""}`}>
                         <StyledButton background={"url(" + file.data + ")"} onClick={() => handleClick(index)}>
                             <div className="btn-overlay">
@@ -121,10 +165,166 @@ const FileOutliner: React.FC<FilesPanelProps> = ({ files, handleUpload }) => {
 }
 
 
+const StyledImageCard = styled.div<{ error: boolean }>`
+    min-height: 360px;
+    display: flex;
+    
+    &:not(:last-child){
+        margin-bottom: 20px;
+    }
 
-export const FilesPanel: React.FC<FilesPanelProps> = ({ files, handleUpload }) => {
+    .image-card{
+        background: ${p => p.error ? "#FBECEE" : "#F7F7F7"};
+        padding: 50px 70px;
+        margin-right: 30px;
+        border-radius: 20px;
+        width: 100%;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 50px;
+
+        font-family: "Poppins";
+
+        
+        h3{
+            font-size: 33px;
+            font-weight: 600;
+        }
+
+        p{
+            font-size: 16px;
+        }
+
+        button{
+            padding: 10px 30px;
+
+            font-family: "Poppins";
+            font-size: 16px;
+            font-weight: 600;
+
+            border-radius: 6px;
+            outline: none;
+            border: 0;
+            cursor: pointer;
+        }
+        
+        .image-container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            img{
+                border-radius: 10px;
+                max-width: 100%;
+            }
+        }
+
+        .error-container{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+
+            font-family: "Poppins";
+            color: #D3405C;
+            
+
+            h3{
+                margin: 0;
+                margin-bottom: 15px;
+            }
+
+            p{
+                margin-bottom: 30px;
+            }
+
+            button{
+                color: white;
+                background: #D3405C;
+
+                &:hover{
+                    background: #C23B55;
+                }
+            }
+        }
+    }
+
+    .delete-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+
+        button{
+            width: 65px;
+            height: 65px;
+            outline: none;
+            border: 0;
+            border-radius: 50%;
+            background: #F7F7F7;
+            color: #c6c6c6;
+            padding: 15px;
+            cursor: pointer;
+
+            &:hover{
+                color: #7f7f7f;
+                
+            }
+        }
+
+        &.error{
+            button{
+                background: #D3405C;
+                color: white;
+
+                &:hover{
+                    background: #C23B55;
+                } 
+            }
+        }
+    }
+
+`
+
+type ImageCardProps = {
+    file: UploadFile,
+    updateImage: (data: UploadFile, index: number) => void,
+    key: string | number,
+}
+
+const ImageCard: React.FC<ImageCardProps> = ({ file }) => {
+    return <StyledImageCard error={file.error}>
+        <div className="image-card">
+            <div className="image-container"><img src={file.data}></img></div>
+            {file.error ?
+                <div className="error-container">
+                    <h3>Error</h3>
+                    <p>{file.message}</p>
+                    <button className="browse-error">Browse a new photo</button>
+                </div> :
+                <div className="image-form-container">
+
+                </div>}
+
+        </div>
+        <div className={`delete-container ${file.error && "error"}`}>
+            <button><IoMdTrash size={32}></IoMdTrash></button>
+        </div>
+    </StyledImageCard>
+}
+
+type FilesPanelProps = {
+    files: UploadFile[],
+    handleUpload: () => void,
+    updateImage: (data: UploadFile, index: number) => void
+}
+
+export const FilesPanel: React.FC<FilesPanelProps> = ({ files, handleUpload, updateImage }) => {
     return <StyledFilesPanel>
         <FileOutliner files={files} handleUpload={handleUpload}>
         </FileOutliner>
+        <div id="image-card-container">
+            {files.map((file, index) => <ImageCard file={file} key={index} updateImage={updateImage} />)}
+        </div>
     </StyledFilesPanel>
 }

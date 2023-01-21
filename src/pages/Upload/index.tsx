@@ -9,7 +9,7 @@ const StyledUpload = styled.main`
     justify-content: center;
     flex-direction: column;
     max-width: 1600px;
-    padding: 0 90px;
+    padding: 0 60px;
     margin: 0 auto;
     margin-top: 120px;  
 
@@ -45,7 +45,7 @@ export const Upload: React.FC = () => {
                                 message = "Uploads must be at least 4 megapixels in size. This photo will not be published."
                             }
                             const uploadFile: UploadFile = { data: result, error: error, message: message }
-                            setUploadFiles([...uploadFiles, uploadFile])
+                            setUploadFiles(uf => [...uf, uploadFile])
                         }
                         virtualImage.src = result
                     }
@@ -59,12 +59,18 @@ export const Upload: React.FC = () => {
         if (fileInput.current) fileInput.current.click()
     }
 
+    const updateImage = (data: UploadFile, index: number) => {
+        let newData = [...uploadFiles]
+        newData[index] = data
+        setUploadFiles(newData)
+    }
+
     return <>
         <Nav searchBarEnabled={true} transparentBackground={false}></Nav>
         <StyledUpload>
             <input id="pic-input-hidden" type="file" ref={fileInput} multiple accept="image/*" onChange={e => handleFileChange(e)}></input>
             {
-                uploadFiles.length <= 0 ? <UploadHome handleUpload={handleUpload} /> : <FilesPanel files={uploadFiles} handleUpload={handleUpload} />
+                uploadFiles.length <= 0 ? <UploadHome handleUpload={handleUpload} /> : <FilesPanel files={uploadFiles} handleUpload={handleUpload} updateImage={updateImage} />
             }
         </StyledUpload>
 
