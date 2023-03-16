@@ -19,9 +19,10 @@ const StyledUpload = styled.main`
 `
 
 export type UploadFile = {
+    id: string
     data: string,
     error: boolean,
-    message?: string
+    message?: string,
 }
 
 export const Upload: React.FC = () => {
@@ -29,39 +30,43 @@ export const Upload: React.FC = () => {
 
     const fileInput = useRef<HTMLInputElement>(null)
 
+    const handleFiles = (fileList: FileList) => {
+        return Array.from(fileList).reduce((files, file) => {
+            if (!uploadFiles.some(val => val.id === file.name) && file.type.startsWith('image/')) {
+                files.push({
+                    id: file.name,
+                    data: URL.createObjectURL(file),
+                    error: false,
+                })
+            }
+            return files
+        }, [] as UploadFile[])
+    }
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            Array.from(e.target.files).forEach(file => {
-                const fileReader = new FileReader()
-                fileReader.onload = (e) => {
-                    if (fileReader.result && typeof fileReader.result === "string") {
-                        const result = fileReader.result
-                        let virtualImage = new Image()
-                        virtualImage.onload = () => {
-                            let error = false;
-                            let message = undefined
-                            if (virtualImage.width < 2560 || virtualImage.height < 1440) {
-                                error = true
-                                message = "Uploads must be at least 4 megapixels in size. This photo will not be published."
-                            }
-                            const uploadFile: UploadFile = { data: result, error: error, message: message }
-                            setUploadFiles(uf => [...uf, uploadFile])
-                        }
-                        virtualImage.src = result
-                    }
-                }
-                fileReader.readAsDataURL(file)
-            })
+            setUploadFiles([...uploadFiles, ...handleFiles(e.target.files)]);
+            e.target.value = ""
         }
-    }
+    };
 
     const handleUpload = () => {
         if (fileInput.current) fileInput.current.click()
     }
 
+    const handleDragUpload = (files: FileList) => {
+        setUploadFiles([...uploadFiles, ...handleFiles(files)]);
+    }
+
     const updateImage = (data: UploadFile, index: number) => {
         let newData = [...uploadFiles]
         newData[index] = data
+        setUploadFiles(uf => newData)
+    }
+
+    const deleteImage = (index: number) => {
+        let newData = [...uploadFiles]
+        newData.splice(index, 1)
         setUploadFiles(newData)
     }
 
@@ -70,7 +75,7 @@ export const Upload: React.FC = () => {
         <StyledUpload>
             <input id="pic-input-hidden" type="file" ref={fileInput} multiple accept="image/*" onChange={e => handleFileChange(e)}></input>
             {
-                uploadFiles.length <= 0 ? <UploadHome handleUpload={handleUpload} /> : <FilesPanel files={uploadFiles} handleUpload={handleUpload} updateImage={updateImage} />
+                uploadFiles.length <= 0 ? <UploadHome handleUpload={handleUpload} handleDragUpload={handleDragUpload} /> : <FilesPanel files={uploadFiles} handleUpload={handleUpload} updateImage={updateImage} deleteImage={deleteImage} />
             }
         </StyledUpload>
 

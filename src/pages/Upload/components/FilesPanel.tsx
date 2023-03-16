@@ -288,14 +288,34 @@ const StyledImageCard = styled.div<{ error: boolean }>`
 
 type ImageCardProps = {
     file: UploadFile,
+    imageIndex: number,
     updateImage: (data: UploadFile, index: number) => void,
+    deleteImage: (index: number) => void
     key: string | number,
 }
 
-const ImageCard: React.FC<ImageCardProps> = ({ file }) => {
+
+
+const ImageCard: React.FC<ImageCardProps> = ({ file, deleteImage, imageIndex, updateImage }) => {
+    const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>, file: UploadFile, index: number) => {
+        let error = false;
+        let message = undefined
+        if (e.currentTarget.naturalWidth < 2560 || e.currentTarget.naturalHeight < 1440) {
+            error = true
+            message = "Uploads must be at least 4 megapixels in size. This photo will not be published."
+        }
+        const newFile: UploadFile = {
+            ...file, ...{
+                error: error,
+                message: message
+            }
+        };
+        updateImage(newFile, index)
+    }
+
     return <StyledImageCard error={file.error}>
         <div className="image-card">
-            <div className="image-container"><img src={file.data}></img></div>
+            <div className="image-container"><img src={file.data} onLoad={e => handleImageLoad(e, file, imageIndex)}></img></div>
             {file.error ?
                 <div className="error-container">
                     <h3>Error</h3>
@@ -308,7 +328,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ file }) => {
 
         </div>
         <div className={`delete-container ${file.error && "error"}`}>
-            <button><IoMdTrash size={32}></IoMdTrash></button>
+            <button onClick={() => deleteImage(imageIndex)}><IoMdTrash size={32}></IoMdTrash></button>
         </div>
     </StyledImageCard>
 }
@@ -316,15 +336,16 @@ const ImageCard: React.FC<ImageCardProps> = ({ file }) => {
 type FilesPanelProps = {
     files: UploadFile[],
     handleUpload: () => void,
-    updateImage: (data: UploadFile, index: number) => void
+    updateImage: (data: UploadFile, index: number) => void,
+    deleteImage: (index: number) => void
 }
 
-export const FilesPanel: React.FC<FilesPanelProps> = ({ files, handleUpload, updateImage }) => {
+export const FilesPanel: React.FC<FilesPanelProps> = ({ files, handleUpload, updateImage, deleteImage }) => {
     return <StyledFilesPanel>
         <FileOutliner files={files} handleUpload={handleUpload}>
         </FileOutliner>
         <div id="image-card-container">
-            {files.map((file, index) => <ImageCard file={file} key={index} updateImage={updateImage} />)}
+            {files.map((file, index) => <ImageCard file={file} key={index} imageIndex={index} updateImage={updateImage} deleteImage={deleteImage} />)}
         </div>
     </StyledFilesPanel>
 }
