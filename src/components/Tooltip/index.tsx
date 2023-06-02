@@ -1,5 +1,5 @@
 import { usePopper } from "react-popper"
-import React, { useRef, useState } from 'react'
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { StyledTooltip } from "./styles"
 import { detectClickOutside } from "../../utils/detectClickOutside"
 import { Placement } from "@popperjs/core"
@@ -24,12 +24,12 @@ interface TooltipProps extends React.ComponentPropsWithoutRef<"div"> {
  * A simple and customizable tooltip component
  * @param activateIf - Accepts a condition or a boolean that will determine whether or not the component is rendered
  */
-export const Tooltip = ({ children, tooltipContent, activateOn, activateIf = true, delay = 250, placement = "bottom-end", arrowOptions }: TooltipProps): JSX.Element => {
+export const Tooltip = forwardRef<any, TooltipProps>(({ children, tooltipContent, activateOn, activateIf = true, delay = 250, placement = "bottom-end", arrowOptions }, ref) => {
     const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>()
     const [popperElement, setPopperElement] = useState<HTMLDivElement | null>()
     const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>()
 
-    const tooltipRefElement = useRef(null)
+    const tooltipRefElement = useRef<HTMLDivElement>(null)
 
     const [visible, setVisible] = useState(false)
 
@@ -64,6 +64,7 @@ export const Tooltip = ({ children, tooltipContent, activateOn, activateIf = tru
         }
     }
 
+    useImperativeHandle(ref, () => tooltipRefElement.current)
 
     return (
         <StyledTooltip visible={visible} ref={tooltipRefElement} arrowOptions={arrowOptions}>
@@ -80,4 +81,4 @@ export const Tooltip = ({ children, tooltipContent, activateOn, activateIf = tru
         </StyledTooltip>
 
     )
-}
+})

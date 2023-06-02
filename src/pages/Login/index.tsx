@@ -60,20 +60,20 @@ export const Login = (): JSX.Element => {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
-        try{
+        try {
             let result = await auth.functions.Login(form.email, form.password)
             console.log(result)
         } catch (err: any) {
-            console.log({err})
+            console.log({ err })
             setError(true)
         }
     }
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
-        setForm({...form, [key]: e.target.value})
+        setForm({ ...form, [key]: e.target.value })
     }
     useEffect(() => {
-        if(auth.user){
+        if (auth.user) {
             navigate("/")
         }
     }, [auth])
@@ -81,7 +81,7 @@ export const Login = (): JSX.Element => {
         <>
             <NavAuth page="login" type="dark"></NavAuth>
             <StyledAuthForm>
-                {error &&<div id='error-message'>
+                {error && <div id='error-message'>
                     Invalid e-mail or password. Maybe you signed up with Google?
                 </div>}
                 <div id="form-header">
@@ -90,11 +90,11 @@ export const Login = (): JSX.Element => {
                     </div>
                 </div>
                 <AuthForm onSubmit={(e) => handleLogin(e)}>
-                    <button className="sm-join facebook-join" onClick={() => auth.functions.LoginWithFacebook()}><AiFillFacebook className="icon" size={34} />Login with Facebook</button>
-                    <button className="sm-join google-join" onClick={() => auth.functions.LoginWithGoogle()}><AiFillGoogleCircle className="icon" size={34} />Login with Google</button>
+                    <button type="button" className="sm-join facebook-join" onClick={() => auth.functions.LoginWithFacebook()}><AiFillFacebook className="icon" size={34} />Login with Facebook</button>
+                    <button type="button" className="sm-join google-join" onClick={() => auth.functions.LoginWithGoogle()}><AiFillGoogleCircle className="icon" size={34} />Login with Google</button>
                     <div className="divider">OR</div>
-                    <input type='email' placeholder="Email" required minLength={3} value={form.email} onChange={(e) => handleInput(e, 'email')}/>
-                    <input type='password' placeholder="Password" minLength={8} value={form.password}  onChange={(e) => handleInput(e, 'password')}/>
+                    <input type='email' placeholder="Email" required minLength={3} value={form.email} onChange={(e) => handleInput(e, 'email')} />
+                    <input type='password' placeholder="Password" minLength={8} value={form.password} onChange={(e) => handleInput(e, 'password')} />
                     <button type="submit" className="form-submit">Login</button>
                     <a className='footer' href='/reset-password'>Forgot your password?</a>
                 </AuthForm>

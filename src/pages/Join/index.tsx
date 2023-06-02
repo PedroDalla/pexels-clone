@@ -3,6 +3,7 @@ import { AuthForm } from "../../components/AuthForm";
 import { NavAuth } from "../../components/NavAuth";
 import { AiFillFacebook, AiFillGoogleCircle } from 'react-icons/ai'
 import { Banner } from "./components/Banner";
+import { useAuth } from "../../contexts/AuthContext"
 
 const StyledJoin = styled.div`
     max-width: 1420px;
@@ -70,9 +71,11 @@ const StyledJoin = styled.div`
 `
 
 export function Join() {
+    const auth = useAuth();
+
     return (
         <StyledJoin>
-            <NavAuth page='join'/>
+            <NavAuth page='join' />
             <main>
                 <section id='form-section'>
                     <div id='form'>
@@ -85,8 +88,8 @@ export function Join() {
                             </div>
                         </div>
                         <AuthForm>
-                            <button className="sm-join facebook-join"><AiFillFacebook className="icon" size={34}/> Join with Facebook</button>
-                            <button className="sm-join google-join"><AiFillGoogleCircle className="icon" size={34} /> Join with Google</button>
+                            <button type="button" className="sm-join facebook-join"><AiFillFacebook className="icon" size={34} onClick={() => auth.functions.LoginWithFacebook()} /> Join with Facebook</button>
+                            <button type="button" className="sm-join google-join"><AiFillGoogleCircle className="icon" size={34} onClick={() => auth.functions.LoginWithGoogle()} /> Join with Google</button>
                             <div className="divider">OR</div>
                             <div className="form-group">
                                 <input type='text' placeholder="First name" required />
@@ -94,11 +97,11 @@ export function Join() {
                             </div>
                             <input type='email' placeholder="Email" required />
                             <input type='password' placeholder="Password" minLength={8} />
-                            <button className="form-submit">Create New Account</button>
+                            <button type="submit" className="form-submit">Create New Account</button>
                         </AuthForm>
                     </div>
                 </section>
-                <Banner/>
+                <Banner />
             </main>
         </StyledJoin>
     )
