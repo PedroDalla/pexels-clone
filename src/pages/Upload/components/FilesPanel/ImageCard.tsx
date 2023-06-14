@@ -1,15 +1,12 @@
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { IoMdTrash } from "react-icons/io";
 import styled from "styled-components";
-import { UploadFile } from "../..";
+import { IStageFile } from "../../../../interfaces";
 
 const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
   min-height: 360px;
   display: ${(p) => (p.hide ? "none" : "flex")};
-
-  &:last-child {
-    margin-bottom: 100px;
-  }
+  margin-bottom: 100px;
 
   @media (min-width: 901px) {
     &:not(:last-child) {
@@ -38,6 +35,7 @@ const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
 
     @media (max-width: 900px) {
       grid-template-columns: 1fr;
+      grid-gap: 30px;
     }
 
     font-family: "Poppins";
@@ -71,6 +69,21 @@ const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
       img {
         border-radius: 10px;
         max-width: 100%;
+      }
+    }
+
+    .remove-mobile {
+      max-width: fit-content;
+      margin: 0 auto;
+      color: white;
+      background: #d3405c;
+
+      &:hover {
+        background: #c23b55;
+      }
+
+      @media (min-width: 900px) {
+        display: none;
       }
     }
 
@@ -196,10 +209,10 @@ const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
 `;
 
 type ImageCardProps = {
-  file: UploadFile;
+  file: IStageFile;
   imageIndex: number;
   selected: number;
-  updateImage: (data: UploadFile, index: number) => void;
+  updateImage: (data: IStageFile, index: number) => void;
   deleteImage: (index: number) => void;
   key: string | number;
   selectImage: (index: number) => void;
@@ -223,24 +236,37 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
 
     const handleImageLoad = (
       e: React.SyntheticEvent<HTMLImageElement, Event>,
-      file: UploadFile,
+      file: IStageFile,
       index: number
     ) => {
       let error = false;
       let message = undefined;
-      if (
-        e.currentTarget.naturalWidth < 2560 ||
-        e.currentTarget.naturalHeight < 1440
-      ) {
+      let width = e.currentTarget.naturalWidth;
+      let height = e.currentTarget.naturalHeight;
+      if ((width * height) / 1000000 < 2) {
         error = true;
         message =
-          "Uploads must be at least 4 megapixels in size. This photo will not be published.";
+          "Uploads must be at least 2 megapixels in size. This image will not be published.";
       }
-      const newFile: UploadFile = {
+
+      const calculateGCD: (a: number, b: number) => number = (a, b) => {
+        if (b === 0) {
+          return a;
+        }
+        return calculateGCD(b, a % b);
+      };
+
+      const gcd = calculateGCD(width, height);
+      const newFile: IStageFile = {
         ...file,
         ...{
           error: error,
           message: message,
+          technical: {
+            height: height,
+            width: width,
+            aspectRatio: `${width / gcd}:${height / gcd}`,
+          },
         },
       };
       updateImage(newFile, index);
@@ -255,21 +281,55 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
             selectImage(imageIndex);
           }
         }
-
-        setHide(window.innerWidth < 900 && selected !== imageIndex);
       };
+
+      const handleResize = () => {
+        if (window.outerWidth <= 900) {
+          if (selected !== imageIndex) {
+            setHide(true);
+          } else {
+            setHide(false);
+          }
+        } else {
+          setHide(false);
+        }
+      };
+
       window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
+      window.addEventListener("resize", handleResize);
+
+      return () => {
+        window.removeEventListener("resize", handleResize);
+        window.removeEventListener("scroll", handleScroll);
+      };
     }, []);
+
+    useEffect(() => {
+      setHide(window.innerWidth < 900 && selected !== imageIndex);
+    }, [selected]);
+
+    const handleInput = (
+      e: React.ChangeEvent<HTMLInputElement>,
+      field: "title" | "location" | "tags"
+    ) => {
+      let newFile = file;
+      newFile.optionalDetails[field] = e.target.value;
+      return updateImage(newFile, imageIndex);
+    };
 
     return (
       <StyledImageCard error={file.error} ref={forwardedRef} hide={hide}>
         <div className="image-card" ref={elementRef}>
           <div className="image-container">
             <img
-              src={file.data}
+              src={file.dataUrl}
               onLoad={(e) => handleImageLoad(e, file, imageIndex)}></img>
           </div>
+          <button
+            className="remove-mobile"
+            onClick={() => deleteImage(imageIndex)}>
+            Remove photo
+          </button>
           {file.error ? (
             <div className="error-container">
               <h3>Error</h3>
@@ -285,13 +345,15 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
               <form className="image-form">
                 <div className="form-field">
                   <div className="form-label">
-                    Title{" "}
+                    Title
                     <span className="form-label-optional">(optional)</span>
                   </div>
                   <input
                     type="text"
                     placeholder="Enter title"
-                    maxLength={32}></input>
+                    maxLength={45}
+                    value={file.optionalDetails.title}
+                    onChange={(e) => handleInput(e, "title")}></input>
                 </div>
                 <div className="form-field">
                   <div className="form-label">
@@ -300,21 +362,25 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
                   <input
                     type="text"
                     placeholder="Enter tags"
-                    maxLength={32}></input>
+                    maxLength={45}
+                    value={file.optionalDetails.tags}
+                    onChange={(e) => handleInput(e, "tags")}></input>
                 </div>
                 <div className="form-field">
                   <div className="form-label">
-                    Location{" "}
+                    Location
                     <span className="form-label-optional">(optional)</span>
                   </div>
                   <input
                     type="text"
                     placeholder="Enter location"
-                    maxLength={32}></input>
+                    maxLength={45}
+                    value={file.optionalDetails.location}
+                    onChange={(e) => handleInput(e, "location")}></input>
                 </div>
                 <div className="form-field">
                   <div className="form-label">
-                    Challenges{" "}
+                    Challenges
                     <span className="form-label-optional">(unavailable)</span>
                   </div>
                   <input

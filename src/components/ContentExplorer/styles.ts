@@ -7,17 +7,6 @@ export const StyledContentExplorer = styled.div`
     margin-top: 1rem;
     padding: 0 1.5rem;
 
-    #explorer-header{
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 45px;
-        > span {
-            font-size: 24px;
-            font-weight: 500;
-            font-family: "Poppins"
-        }   
-    }
-
     #explorer-main{
         display: flex;
 

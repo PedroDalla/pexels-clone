@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { RiErrorWarningFill } from "react-icons/ri";
 import styled from "styled-components";
-import { UploadFile } from "../..";
+import { useAuth } from "../../../../contexts/AuthContext";
+import { IStageFile } from "../../../../interfaces";
 
 const StyledUploadBar = styled.div<{ percentageReady: number }>`
   position: fixed;
@@ -83,15 +84,23 @@ const StyledUploadBar = styled.div<{ percentageReady: number }>`
     border: 0;
     outline: 0;
     border-radius: 6px;
-    padding: 0.8rem 1.3rem;
+    padding: 0.9rem 1.4rem;
     transition: 0.2s ease;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.3px;
 
     cursor: pointer;
 
-    &:hover {
+    &:hover:not(:disabled) {
       opacity: 0.7;
       transform: translateY(-2px);
+    }
+
+    &:disabled {
+      color: #bfbfbf;
+      border-color: #f7f7f7;
+      background: #f7f7f7;
+      cursor: not-allowed;
     }
 
     &.mobile {
@@ -109,12 +118,21 @@ const StyledUploadBar = styled.div<{ percentageReady: number }>`
 `;
 
 interface UploadBarProps {
-  files: UploadFile[];
+  files: IStageFile[];
+  displayModal: () => void;
+  completed: boolean;
 }
 
-export const UploadBar: React.FC<UploadBarProps> = ({ files }) => {
-  const filesReady = useMemo(
-    () => files.filter((file) => !file.error).length,
+export const UploadBar: React.FC<UploadBarProps> = ({
+  files,
+  displayModal,
+  completed,
+}) => {
+  const [filesReady, filesNotReady] = useMemo(
+    () => [
+      files.filter((file) => !file.error).length,
+      files.filter((file) => file.error).length,
+    ],
     [files]
   );
 
@@ -132,23 +150,39 @@ export const UploadBar: React.FC<UploadBarProps> = ({ files }) => {
           </div>
         </div>
       </div>
-      <div className="content-tracker error">
-        <div className="content-tracker-icon">
-          <RiErrorWarningFill size={35} color="#d3405c" />
-        </div>
-        <div className="content-tracker-text">
-          <div className="content-tracker-title">Content failed</div>
-          <div className="content-tracker-description">
-            {files.filter((file) => file.error).length} of {files.length} photos
-            failed
+      {filesNotReady > 0 && (
+        <div className="content-tracker error">
+          <div className="content-tracker-icon">
+            <RiErrorWarningFill size={35} color="#d3405c" />
           </div>
-          <div className="content-tracker-description-mobile">
-            {files.filter((file) => file.error).length} / {files.length}
+          <div className="content-tracker-text">
+            <div className="content-tracker-title">Content failed</div>
+            <div className="content-tracker-description">
+              {filesNotReady} of {files.length} photos failed
+            </div>
+            <div className="content-tracker-description-mobile">
+              {files.filter((file) => file.error).length} / {files.length}
+            </div>
           </div>
         </div>
-      </div>
-      <div className="submit-button">Submit Content</div>
-      <div className="submit-button mobile">Submit</div>
+      )}
+      <button
+        type="button"
+        className="submit-button"
+        onClick={() => {
+          if (!completed) displayModal();
+        }}
+        disabled={!filesReady || completed}>
+        Submit Content
+      </button>
+      <button
+        className="submit-button mobile"
+        onClick={() => {
+          if (!completed) displayModal();
+        }}
+        disabled={!filesReady || completed}>
+        Submit
+      </button>
     </StyledUploadBar>
   );
 };

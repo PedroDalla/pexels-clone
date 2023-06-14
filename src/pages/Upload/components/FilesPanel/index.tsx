@@ -1,10 +1,14 @@
 import styled from "styled-components";
-import { UploadFile } from "../..";
 import { FileOutliner } from "./FileOutliner";
 
-import { createRef, useRef, useState } from "react";
+import { createRef, useEffect, useRef, useState } from "react";
 import { ImageCard } from "./ImageCard";
 import { UploadBar } from "./UploadBar";
+import { createPortal } from "react-dom";
+import { UploadModal } from "./UploadModal";
+import { uploadImage } from "../../../../services/firebase";
+import { useAuth } from "../../../../contexts/AuthContext";
+import { IStageFile } from "../../../../interfaces";
 
 const StyledFilesPanel = styled.div`
   display: flex;
@@ -15,11 +19,10 @@ const StyledFilesPanel = styled.div`
     gap: 20px;
   }
 `;
-
 type FilesPanelProps = {
-  files: UploadFile[];
+  files: IStageFile[];
   handleUpload: () => void;
-  updateImage: (data: UploadFile, index: number) => void;
+  updateImage: (data: IStageFile, index: number) => void;
   deleteImage: (index: number) => void;
   replaceImage: (index: number) => void;
 };
@@ -32,9 +35,21 @@ export const FilesPanel: React.FC<FilesPanelProps> = ({
   replaceImage,
 }) => {
   const [selected, setSelected] = useState<number>(0);
+  const [showModal, setShowModal] = useState(false);
+  const [progress, setProgress] = useState<number[]>([]);
+  const [completed, setCompleted] = useState(false);
+
+  const auth = useAuth();
 
   const selectImage = (index: number) => {
     setSelected(index);
+  };
+
+  const displayModal = () => {
+    setShowModal(true);
+  };
+  const hideModal = () => {
+    setShowModal(false);
   };
 
   const focusOnImage = (index: number) => {
@@ -44,6 +59,29 @@ export const FilesPanel: React.FC<FilesPanelProps> = ({
         window.scrollTo({ top: window.scrollY + y - 100, behavior: "smooth" });
       }
     }
+  };
+
+  const uploadFiles = () => {
+    const handleCompletion = () => {
+      setCompleted(true);
+    };
+
+    const handleProgress = (value: number, index: number) => {
+      let newProgress = [...progress];
+      newProgress[index] = value;
+      setProgress(newProgress);
+    };
+
+    files.forEach((file, index) => {
+      if (auth.user)
+        uploadImage(
+          file,
+          auth.user,
+          () => console.log,
+          handleCompletion,
+          (progress) => handleProgress(progress, index)
+        );
+    });
   };
 
   const imageCardRefs = useRef<React.RefObject<HTMLDivElement>[]>([]);
@@ -74,7 +112,19 @@ export const FilesPanel: React.FC<FilesPanelProps> = ({
           );
         })}
       </div>
-      <UploadBar files={files}></UploadBar>
+      <UploadBar
+        files={files}
+        displayModal={displayModal}
+        completed={completed}></UploadBar>
+      {showModal &&
+        createPortal(
+          <UploadModal
+            closeModal={hideModal}
+            progress={progress}
+            uploadFiles={uploadFiles}
+          />,
+          document.body
+        )}
     </StyledFilesPanel>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { Nav } from "../../components/Nav";
+import { IStageFile } from "../../interfaces";
 import { FilesPanel } from "./components/FilesPanel";
 import { UploadHome } from "./components/UploadHome";
 
@@ -22,15 +23,8 @@ const StyledUpload = styled.main`
   }
 `;
 
-export type UploadFile = {
-  id: string;
-  data: string;
-  error: boolean;
-  message?: string;
-};
-
 export const Upload: React.FC = () => {
-  const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]);
+  const [uploadFiles, setUploadFiles] = useState<IStageFile[]>([]);
 
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -42,12 +36,19 @@ export const Upload: React.FC = () => {
       ) {
         files.push({
           id: file.name,
-          data: URL.createObjectURL(file),
+          data: file,
+          dataUrl: URL.createObjectURL(file),
           error: false,
+          optionalDetails: {},
+          technical: {
+            aspectRatio: "",
+            height: 0,
+            width: 0,
+          },
         });
       }
       return files;
-    }, [] as UploadFile[]);
+    }, [] as IStageFile[]);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,25 +58,30 @@ export const Upload: React.FC = () => {
     }
   };
 
+  //Triggers the upload function
   const handleUpload = () => {
     if (fileInput.current) fileInput.current.click();
   };
 
+  //Triggers the upload function when dragging files
   const handleDragUpload = (files: FileList) => {
     setUploadFiles([...uploadFiles, ...handleFiles(files)]);
   };
 
+  //Deletes the selected image and triggers the fileInput for new selection
   const replaceImage = (index: number) => {
     deleteImage(index);
     if (fileInput.current) fileInput.current.click();
   };
 
-  const updateImage = (data: UploadFile, index: number) => {
+  //Replaces a specific image object with new value
+  const updateImage = (data: IStageFile, index: number) => {
     let newData = [...uploadFiles];
     newData[index] = data;
-    setUploadFiles((uf) => newData);
+    setUploadFiles(newData);
   };
 
+  //Removes an index from the image list
   const deleteImage = (index: number) => {
     let newData = [...uploadFiles];
     newData.splice(index, 1);

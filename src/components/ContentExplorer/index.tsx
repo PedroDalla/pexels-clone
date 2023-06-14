@@ -1,92 +1,118 @@
-import { useState, useEffect, useRef } from 'react'
-import { StyledContentExplorer } from './styles'
-import { Image } from '../Image/index'
-import { usePexels } from '../../hooks/usePexels'
-import { Photo, Video } from '../../interfaces'
-import { ContentVisualizer } from '../ContentVisualizer'
-import { createPortal } from 'react-dom'
+import { useState, useEffect, useRef, useMemo } from "react";
+import { StyledContentExplorer } from "./styles";
+import { Image } from "../Image/index";
+import { IPhoto } from "../../interfaces";
+import { ContentVisualizer } from "../ContentVisualizer";
+import { createPortal } from "react-dom";
 
-export const ContentExplorer = (): JSX.Element => {
-    const element = useRef<HTMLDivElement>(null)
+type ContentExplorerProps = {
+  images: IPhoto[];
+  onScroll?: () => void;
+};
 
-    const [columnCount, setColumnCount] = useState(2)
-    const [currentContent, setCurrentContent] = useState<Photo | Video | null>()
-    const { photos, fetchPhotos } = usePexels()
+export const ContentExplorer: React.FC<ContentExplorerProps> = ({
+  images,
+  onScroll,
+}) => {
+  const element = useRef<HTMLDivElement>(null);
 
-    let columns: Array<JSX.Element[]> = []
+  const [columnCount, setColumnCount] = useState(2);
+  const [selectedImage, setSelectedImage] = useState<IPhoto | null>();
 
-    function setContent(content: Photo | Video) {
-        setCurrentContent(content)
+  const columns: Array<JSX.Element[]> = useMemo(() => {
+    let cols: Array<JSX.Element[]> = [];
+    if (images) {
+      images.forEach((image, i) => {
+        let mod = i % columnCount;
+
+        const imageElement = (
+          <Image imageInfo={image} setCurrentImage={setCurrentImage} key={i} />
+        );
+        if (cols[mod]) {
+          cols[mod].push(imageElement);
+        } else {
+          cols[mod] = [imageElement];
+        }
+      });
+    }
+    return cols;
+  }, [images, columnCount]);
+
+  function setCurrentImage(image: IPhoto) {
+    setSelectedImage(image);
+  }
+
+  function hideContentVisualizer() {
+    setSelectedImage(null);
+  }
+
+  // useEffect(() => {
+  //   if (images) {
+  //     images.forEach((image, i) => {
+  //       let mod = i % columnCount;
+
+  //       const imageElement = (
+  //         <Image imageInfo={image} setCurrentImage={setCurrentImage} key={i} />
+  //       );
+  //       if (columns[mod]) {
+  //         columns[mod].push(imageElement);
+  //       } else {
+  //         columns[mod] = [imageElement];
+  //       }
+  //     });
+  //   }
+  // }, [images]);
+
+  //Only run on startup
+  useEffect(() => {
+    function calculateColumns() {
+      let colNumber: number;
+      if (window.innerWidth >= 2200) {
+        colNumber = 4;
+      } else if (window.innerWidth >= 1050) {
+        colNumber = 3;
+      } else if (window.innerWidth >= 650) {
+        colNumber = 2;
+      } else {
+        colNumber = 1;
+      }
+      setColumnCount(colNumber);
+    }
+    //Adding event listener to window resize to adjust the ammount of columns to display in the explorer for responsiveness
+    window.onresize = () => {
+      calculateColumns();
+    };
+
+    //Adding event listener to execute callback when reaching the bottom of the current gallery
+    if (onScroll) {
+      window.onscroll = () => {
+        if (element.current) {
+          if (window.scrollY > element.current.scrollHeight - 1500) {
+            onScroll();
+          }
+        }
+      };
     }
 
-    function hideContentVisualizer() {
-        setCurrentContent(null)
-    }
+    calculateColumns();
+  }, []);
 
-    if (photos) {
-        photos.forEach((photo, i) => {
-            let mod = i % columnCount
-
-            if (columns[mod]) {
-                columns[mod].push(<Image imageInfo={photo} setContent={setContent}></Image>)
-            } else {
-                columns[mod] = [<Image imageInfo={photo} setContent={setContent}></Image>]
-            }
-        })
-    }
-
-
-
-    //Only run on startup
-    useEffect(() => {
-        function calculateColumns() {
-            let colNumber: number;
-            if (window.innerWidth >= 2200) {
-                colNumber = 4
-            } else if (window.innerWidth >= 1050) {
-                colNumber = 3
-            } else if (window.innerWidth >= 650) {
-                colNumber = 2
-            } else {
-                colNumber = 1
-            }
-            setColumnCount(colNumber)
-        }
-        //Adding event listener to window resize to adjust the ammount of columns to display in the explorer for responsiveness
-        window.onresize = () => {
-            calculateColumns()
-        }
-
-        //Adding event listener to fetch more photos upon scrolling down the page
-        window.onscroll = () => {
-            if (element.current) {
-                if (window.scrollY > element.current.scrollHeight - 1500) {
-                    fetchPhotos(10)
-                }
-            }
-        }
-
-        calculateColumns()
-    }, [fetchPhotos])
-
-    return (
-        <StyledContentExplorer>
-            <div id='explorer-header'>
-                <span>Free Stock Photos</span>
-            </div>
-            <div id='explorer-main' ref={element}>
-                {
-                    columns.map((column, index) =>
-                        <div key={index} className='explorer-column'>
-                            {
-                                column
-                            }
-                        </div>)
-                }
-            </div>
-            {
-                currentContent && createPortal(<ContentVisualizer content={currentContent} hideVisualizer={hideContentVisualizer}></ContentVisualizer>, document.body)
-            }
-        </StyledContentExplorer>
-    )
-}
+  return (
+    <StyledContentExplorer>
+      <div id="explorer-main" ref={element}>
+        {columns.map((column, index) => (
+          <div key={index} className="explorer-column">
+            {column}
+          </div>
+        ))}
+      </div>
+      {selectedImage &&
+        createPortal(
+          <ContentVisualizer
+            content={selectedImage}
+            hideVisualizer={hideContentVisualizer}></ContentVisualizer>,
+          document.body
+        )}
+    </StyledContentExplorer>
+  );
+};
