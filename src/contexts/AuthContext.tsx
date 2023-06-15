@@ -1,4 +1,4 @@
-import { UserInfo } from "firebase/auth";
+import { Unsubscribe, UserInfo } from "firebase/auth";
 import { createContext, useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../services/firebase";
@@ -10,7 +10,7 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
 } from "firebase/auth";
-import { ref, get, set } from "firebase/database";
+import { ref, get, set, onValue } from "firebase/database";
 import { IUser } from "../interfaces";
 
 type User = IUser;
@@ -20,7 +20,12 @@ export interface AuthContext {
   functions: {
     LoginWithGoogle: () => void;
     LoginWithFacebook: () => void;
-    CreateAccount: (email: string, password: string) => void;
+    CreateAccount: (
+      email: string,
+      password: string,
+      name: string,
+      lastName?: string
+    ) => void;
     Login: (email: string, password: string) => Promise<void>;
     Logout: () => void;
   };
@@ -29,11 +34,12 @@ export interface AuthContext {
 const AuthContext = createContext<AuthContext>({} as AuthContext);
 
 const baseUserObject: {
-  gallery: string[];
-  collections: string[];
+  gallery: { uid: string }[];
+  collections: { uid: string }[];
   followers: string[];
   following: string[];
   views: 0;
+  likes: { [key: string]: boolean };
   totalFollowers: 0;
   totalFollowing: 0;
 } = {
@@ -42,6 +48,7 @@ const baseUserObject: {
   followers: [],
   following: [],
   views: 0,
+  likes: {},
   totalFollowers: 0,
   totalFollowing: 0,
 };
@@ -50,10 +57,21 @@ export const AuthContextProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<User>();
   const navigate = useNavigate();
 
-  const createUser = async (userInfo: UserInfo) => {
+  const createUser = async (
+    userInfo: UserInfo,
+    name?: string,
+    lastName?: string
+  ) => {
     let reference = ref(db, `users/${userInfo.uid}`);
     try {
-      const { displayName, email, phoneNumber, photoURL, uid } = userInfo;
+      let { displayName, email, phoneNumber, photoURL, uid } = userInfo;
+      if (name) {
+        if (lastName) {
+          displayName = name + " " + lastName;
+        } else {
+          displayName = name;
+        }
+      }
       const newUserObject = {
         displayName,
         email,
@@ -69,19 +87,20 @@ export const AuthContextProvider: React.FC = ({ children }) => {
     }
   };
 
-  const handleLogin = async (userInfo: UserInfo) => {
+  const handleLogin = (userInfo: UserInfo, onError: (err: Error) => void) => {
     let reference = ref(db, `users/${userInfo.uid}`);
-    try {
-      const result = await get(reference);
-      const parsed = result.val();
-      if (parsed) {
-        setUser(parsed);
-      } else {
-        await createUser(userInfo);
-      }
-    } catch (err: any) {
-      throw new Error(err);
-    }
+    return onValue(
+      reference,
+      (result) => {
+        const parsed = result.val();
+        if (parsed) {
+          setUser(parsed);
+        } else {
+          createUser(userInfo);
+        }
+      },
+      (err) => onError(err)
+    );
   };
 
   const LoginWithGoogle = () => {
@@ -98,13 +117,15 @@ export const AuthContextProvider: React.FC = ({ children }) => {
 
   const CreateAccount = async (
     email: string,
-    password: string
+    password: string,
+    name: string,
+    lastName?: string
   ): Promise<boolean> => {
     try {
       let result = await createUserWithEmailAndPassword(auth, email, password);
       if (result.user) {
         try {
-          await createUser(result.user);
+          await createUser(result.user, name, lastName);
         } catch (err: any) {
           throw new Error(err);
         }
@@ -137,18 +158,21 @@ export const AuthContextProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
+    let unsubscribe: Unsubscribe;
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        try {
-          await handleLogin(user);
-        } catch (err: any) {
+        unsubscribe = handleLogin(user, (err) => {
           navigate("/");
-          throw new Error(err);
-        }
+          throw new Error(err.message);
+        });
       } else {
         setUser(undefined);
       }
     });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   return (

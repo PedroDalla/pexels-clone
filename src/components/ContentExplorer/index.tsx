@@ -17,51 +17,32 @@ export const ContentExplorer: React.FC<ContentExplorerProps> = ({
   const element = useRef<HTMLDivElement>(null);
 
   const [columnCount, setColumnCount] = useState(2);
-  const [selectedImage, setSelectedImage] = useState<IPhoto | null>();
+  const [index, setIndex] = useState<number | null>(null);
 
   const columns: Array<JSX.Element[]> = useMemo(() => {
     let cols: Array<JSX.Element[]> = [];
     if (images) {
       images.forEach((image, i) => {
-        let mod = i % columnCount;
+        if (image) {
+          let mod = i % columnCount;
 
-        const imageElement = (
-          <Image imageInfo={image} setCurrentImage={setCurrentImage} key={i} />
-        );
-        if (cols[mod]) {
-          cols[mod].push(imageElement);
-        } else {
-          cols[mod] = [imageElement];
+          const imageElement = (
+            <Image imageInfo={image} setIndex={() => setIndex(i)} key={i} />
+          );
+          if (cols[mod]) {
+            cols[mod].push(imageElement);
+          } else {
+            cols[mod] = [imageElement];
+          }
         }
       });
     }
     return cols;
   }, [images, columnCount]);
 
-  function setCurrentImage(image: IPhoto) {
-    setSelectedImage(image);
-  }
-
   function hideContentVisualizer() {
-    setSelectedImage(null);
+    setIndex(null);
   }
-
-  // useEffect(() => {
-  //   if (images) {
-  //     images.forEach((image, i) => {
-  //       let mod = i % columnCount;
-
-  //       const imageElement = (
-  //         <Image imageInfo={image} setCurrentImage={setCurrentImage} key={i} />
-  //       );
-  //       if (columns[mod]) {
-  //         columns[mod].push(imageElement);
-  //       } else {
-  //         columns[mod] = [imageElement];
-  //       }
-  //     });
-  //   }
-  // }, [images]);
 
   //Only run on startup
   useEffect(() => {
@@ -83,19 +64,29 @@ export const ContentExplorer: React.FC<ContentExplorerProps> = ({
       calculateColumns();
     };
 
+    calculateColumns();
+  }, []);
+
+  useEffect(() => {
+    let unsubscribe: () => void;
     //Adding event listener to execute callback when reaching the bottom of the current gallery
+
     if (onScroll) {
-      window.onscroll = () => {
+      const handleScroll = () => {
         if (element.current) {
           if (window.scrollY > element.current.scrollHeight - 1500) {
             onScroll();
           }
         }
       };
+      window.onscroll = handleScroll;
+      unsubscribe = handleScroll;
     }
 
-    calculateColumns();
-  }, []);
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [onScroll]);
 
   return (
     <StyledContentExplorer>
@@ -106,13 +97,15 @@ export const ContentExplorer: React.FC<ContentExplorerProps> = ({
           </div>
         ))}
       </div>
-      {selectedImage &&
-        createPortal(
-          <ContentVisualizer
-            content={selectedImage}
-            hideVisualizer={hideContentVisualizer}></ContentVisualizer>,
-          document.body
-        )}
+      {index != null
+        ? createPortal(
+            <ContentVisualizer
+              content={images[index]}
+              hideVisualizer={hideContentVisualizer}
+            />,
+            document.body
+          )
+        : null}
     </StyledContentExplorer>
   );
 };

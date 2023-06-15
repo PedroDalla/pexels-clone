@@ -1,38 +1,41 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
 export const StyledNavigator = styled.div`
-    > ul{
-        margin: 2rem 0;
-        list-style: none;
-        display: flex;
-        flex-direction: row;
-        padding: 0;
-        
-        li {
-            margin: 0 4px;
-            font-size: 17px;
-            transition: .2s color ease;
-            cursor: pointer;
-            padding: 12px 20px;
-            font-weight: 500;
-            color: #4a4a4a;
-            border: 1px solid transparent;
-            border-radius: 30px;
+  > ul {
+    margin: 2rem 0;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    padding: 0;
 
-            &.selected{
-                color: #fff;
-                background-color: black;
+    li {
+      margin: 0 4px;
+      font-size: 17px;
+      transition: 0.2s color ease;
+      cursor: pointer;
+      padding: 12px 20px;
+      font-weight: 500;
+      color: #4a4a4a;
+      border: 1px solid transparent;
+      border-radius: 30px;
 
-                &:hover{
-                    color: #fff;
-                    background-color: #2c343e;
-                }
-            }
+      &.selected {
+        color: #fff;
+        background-color: black;
 
-            &:hover{
-                color: black;
-            }
+        &:hover {
+          color: #fff;
+          background-color: #2c343e;
         }
-    }
+      }
 
-`
+      &.disabled {
+        cursor: not-allowed;
+      }
+
+      &:hover {
+        color: black;
+      }
+    }
+  }
+`;

@@ -14,7 +14,7 @@ export const StyledHero = styled.header`
 
   overflow: hidden;
 
-  #hero-background{
+  #hero-background {
     position: absolute;
     inset: 0;
     z-index: -3;
@@ -26,15 +26,20 @@ export const StyledHero = styled.header`
       object-fit: cover;
     }
 
-    &::before{
-      content: '';
+    &::before {
+      content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg,rgba(0,0,0,0.2) 0%,rgba(0,0,0,0.2) 100%),linear-gradient(180deg,rgba(0,0,0,0.2) 0%,transparent 100%);
+      background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.2) 0%,
+          rgba(0, 0, 0, 0.2) 100%
+        ),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%);
     }
   }
 
-  #hero-footer{
+  #hero-footer {
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -44,30 +49,28 @@ export const StyledHero = styled.header`
     align-items: center;
     justify-content: flex-end;
 
-   
-
     > a {
       margin-right: 1rem;
       margin-bottom: 1rem;
       color: #dbdbdb;
       font-size: 15px;
-      font-family: 'Poppins', sans-serif;
+      font-family: "Poppins", sans-serif;
       text-decoration: none;
-      opacity: .7;
+      opacity: 0.7;
       transition: opacity 0.2s ease-in;
 
-      >span{
-        color: #fff
+      > span {
+        color: #fff;
       }
 
-      &:hover{
+      &:hover {
         opacity: 1;
       }
     }
   }
 
-  #hero-content{
-    font-family: 'Poppins', 'Roboto', sans-serif;
+  #hero-content {
+    font-family: "Poppins", "Roboto", sans-serif;
     color: white;
 
     display: flex;
@@ -75,11 +78,11 @@ export const StyledHero = styled.header`
     align-items: center;
     flex-direction: column;
     max-width: 650px;
+    padding: 0 15px;
 
-    > h1{
+    > h1 {
       margin-top: 0;
       font-weight: 500;
-
     }
   }
 `;

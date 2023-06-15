@@ -1,27 +1,9 @@
 import React, { useRef, useState } from "react";
-import styled from "styled-components";
 import { Nav } from "../../components/Nav";
 import { IStageFile } from "../../interfaces";
-import { FilesPanel } from "./components/FilesPanel";
-import { UploadHome } from "./components/UploadHome";
-
-const StyledUpload = styled.main`
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  max-width: 1600px;
-  padding: 0 60px;
-  margin: 0 auto;
-  margin-top: 120px;
-
-  @media (max-width: 900px) {
-    padding: 0 5px;
-  }
-
-  #pic-input-hidden {
-    display: none;
-  }
-`;
+import { FilesPanel } from "./components/UploadHome/FilesPanel";
+import { UploadHome } from "./components/UploadHome/UploadHome";
+import { StyledUpload } from "./styles";
 
 export const Upload: React.FC = () => {
   const [uploadFiles, setUploadFiles] = useState<IStageFile[]>([]);

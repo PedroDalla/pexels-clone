@@ -1,9 +1,26 @@
-import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
-import { getDownloadURL, getStorage, ref as strRef, StorageError, uploadBytes, uploadBytesResumable } from 'firebase/storage'
-import { get, getDatabase, onValue, push, ref, set } from 'firebase/database'
-import { IUser, IPhoto, IStageFile, IUploadFile } from '../interfaces';
-import { v4 as uuid } from 'uuid'
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import {
+  getDownloadURL,
+  getStorage,
+  ref as strRef,
+  StorageError,
+  uploadBytesResumable,
+} from "firebase/storage";
+import {
+  get,
+  getDatabase,
+  limitToFirst,
+  onValue,
+  orderByKey,
+  push,
+  query,
+  ref,
+  set,
+  startAt,
+} from "firebase/database";
+import { IUser, IPhoto, IStageFile, IUploadFile } from "../interfaces";
+import { v4 as uuid } from "uuid";
 
 var firebaseConfiguration = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -13,97 +30,188 @@ var firebaseConfiguration = {
   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_MESSENGER_SENDER_ID,
   appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
-
 let app = initializeApp(firebaseConfiguration);
-const auth = getAuth(app)
-const db = getDatabase(app)
-const storage = getStorage(app)
+const auth = getAuth(app);
+const db = getDatabase(app);
+const storage = getStorage(app);
 
-export { auth, db, storage }
+export { auth, db, storage };
 
-
-const storageRef = strRef(storage)
+const storageRef = strRef(storage);
 
 export async function fetchUser(user_uid: string) {
-  let reference = ref(db, `users/${user_uid}`)
+  let reference = ref(db, `users/${user_uid}`);
   try {
-    const result = await get(reference)
-    const parsed = result.val()
+    const result = await get(reference);
+    const parsed = result.val();
     if (parsed) {
-      return parsed
+      return parsed;
     } else {
-      throw new Error("No user was found!")
+      throw new Error("No user was found!");
     }
   } catch (err: any) {
-    throw new Error(err)
+    throw new Error(err);
   }
 }
 
+export function listenForUser(user_uid: string, onUpdate: (val: any) => void) {
+  let reference = ref(db, `users/${user_uid}`);
+
+  return onValue(reference, (val) => onUpdate(val));
+}
+
+export async function fetchImagesPaginated(
+  pageSize: number,
+  startAtKey?: string | null
+): Promise<any[]> {
+  // Query the data
+  let reference = ref(db, "gallery");
+  let imagesQuery;
+  if (startAtKey) {
+    imagesQuery = query(
+      reference,
+      orderByKey(),
+      limitToFirst(pageSize),
+      startAt(startAtKey)
+    );
+  } else {
+    imagesQuery = query(reference, orderByKey(), limitToFirst(pageSize));
+  }
+
+  // Fetch the data
+  try {
+    const snapshot = await get(imagesQuery);
+    const data = snapshot.val();
+
+    // Convert the snapshot data to an array
+    if (data) {
+      const dataArray = Object.keys(data).map((key) => ({ key, ...data[key] }));
+      return dataArray;
+    } else {
+      throw new Error("Empty data array!");
+    }
+  } catch (err) {
+    console.error(err);
+    throw new Error("Unkown error");
+  }
+}
 
 export async function fetchUserGallery(user_uid: string) {
-  let reference = ref(db, `users/${user_uid}/gallery`)
+  let reference = ref(db, `users/${user_uid}/gallery`);
   try {
-    const result = await get(reference)
-    const parsed = result.val()
+    const result = await get(reference);
+    const parsed = result.val();
     if (parsed) {
-      return parsed
+      return parsed;
     } else {
-      throw new Error("No user was found!")
+      throw new Error("No user was found!");
     }
   } catch (err: any) {
-    throw new Error(err)
+    throw new Error(err);
   }
 }
 
 export function listenForImage(img_uid: string, onUpdate: (val: any) => void) {
-  let reference = ref(db, `gallery/${img_uid}`)
+  let reference = ref(db, `gallery/${img_uid}`);
 
-  return onValue(reference, (val) => onUpdate(val))
+  return onValue(reference, (val) => onUpdate(val));
 }
 
-export function getImageURL(img_uid: string) {
-  let reference = strRef(storageRef, `images/${img_uid}`)
-  return getDownloadURL(reference)
+export async function setImageLike(
+  img_uid: string,
+  user_uid: string,
+  like: boolean
+) {
+  let imageReference = ref(db, `gallery/${img_uid}/likes`);
+  let userLikeReference = ref(db, `users/${user_uid}/likes/${img_uid}`);
+  try {
+    const img = await get(imageReference);
+    const parsedImg = img.val();
+    if (typeof parsedImg === "number") {
+      set(userLikeReference, like);
+      let modifier = 1;
+      if (!like) modifier = -1;
+      set(imageReference, parsedImg + modifier);
+    } else {
+      throw new Error("No image was found!");
+    }
+  } catch (err: any) {
+    throw new Error(err);
+  }
 }
-
 
 //Function that uploads an image to the database
-export function uploadImage(file: IStageFile, user: IUser, onError?: (error: StorageError) => void, onCompletion?: () => void, onProgress?: (progress: number) => void) {
-  const uid = uuid()
-  const imageRef = strRef(storageRef, `images/${uid}`)
+export function uploadImage(
+  file: IStageFile,
+  user: IUser,
+  onError?: (error: StorageError) => void,
+  onCompletion?: () => void,
+  onProgress?: (progress: number) => void
+) {
+  const uid = uuid();
+  const imageRef = strRef(storageRef, `images/${uid}`);
   const fileMetadata = {
     likes: 0,
-    photographer_uid: user.uid,
-    uid: uid
-  }
-  const newImage: IUploadFile = { ...file.optionalDetails, ...file.technical, ...fileMetadata }
+    photographerUID: user.uid,
+    uid: uid,
+  };
+  const newImage: IUploadFile = {
+    ...file.optionalDetails,
+    ...file.technical,
+    ...fileMetadata,
+  };
 
   //Uploads the image into the cloud storage
-  const uploadTask = uploadBytesResumable(imageRef, file.data)
+  const uploadTask = uploadBytesResumable(imageRef, file.data);
 
-  uploadTask.on('state_changed', (snapshot) => {
-    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    if (onProgress) onProgress(progress)
-  }, (error) => {
-    if (onError) {
-      onError(error)
-    } else {
-      console.error(error)
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      if (onProgress) onProgress(progress);
+    },
+    (error) => {
+      if (onError) {
+        onError(error);
+      } else {
+        console.error(error);
+      }
+    },
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((uploadURL) => {
+        const galleryRef = ref(db, `gallery/${uid}`);
+        const imageURL = uploadURL.replace(
+          "https://firebasestorage.googleapis.com/",
+          ""
+        );
+        const serverURL = "https://ik.imagekit.io/yhnfbha9i/";
+        const imageURLs = {
+          original: serverURL + imageURL,
+          small: serverURL + "tr:w-800/" + imageURL,
+          medium: serverURL + "tr:w-1200/" + imageURL,
+          blur: serverURL + "tr:bl-7/" + imageURL,
+        };
+        set(galleryRef, { ...newImage, ...imageURLs })
+          .then(() => {
+            //Adds the image into the user's account
+            const userRef = ref(db, `users/${user.uid}/gallery`);
+            push(userRef, { uid: uid })
+              .then(() => {
+                if (onCompletion) {
+                  onCompletion();
+                }
+              })
+              .catch((error) => {
+                if (onError) onError(error);
+              });
+          })
+          .catch((error) => {
+            if (onError) onError(error);
+          });
+      });
     }
-  }, () => {
-    const galleryRef = ref(db, `gallery/${uid}`)
-    set(galleryRef, newImage).then(() => {
-
-      //Adds the image into the user's account
-      const userRef = ref(db, `users/${user.uid}/gallery`)
-      push(userRef, { uid: uid }).then(() => {
-        if (onCompletion) {
-          onCompletion()
-        }
-      }).catch(error => { if (onError) onError(error) })
-    }).catch(error => { if (onError) onError(error) })
-  })
+  );
 }

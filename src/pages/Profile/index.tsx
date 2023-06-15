@@ -2,139 +2,20 @@ import { useEffect, useState } from "react";
 import { IoPersonCircle } from "react-icons/io5";
 import { RiPencilFill } from "react-icons/ri";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import styled from "styled-components";
 import { Nav } from "../../components/Nav";
 import { useAuth } from "../../contexts/AuthContext";
 import { IUser } from "../../interfaces";
 import { fetchUser } from "../../services/firebase";
 import { Navigator } from "../../components/Navigator";
-import { ContentExplorer } from "../../components/ContentExplorer";
 import { Gallery } from "./components/Gallery";
+import { StyledProfile } from "./styles";
 
-const StyledProfile = styled.div`
-  max-width: 1600px;
-  margin: 0 auto;
-  margin-top: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  #title-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    > img {
-      border-radius: 50%;
-      width: 130px;
-    }
-    > #profile-name {
-      margin: 15px 0;
-      font-size: 52px;
-      font-family: "Poppins";
-      font-weight: 500;
-      color: #2c343e;
-    }
-  }
-
-  #edit-profile {
-    display: flex;
-    justify-content: center;
-    background: #05a081;
-    color: #fff;
-    font-family: "Poppins";
-    text-decoration: none;
-    font-size: 16px;
-    border: 0;
-    outline: 0;
-    border-radius: 6px;
-    padding: 0.8rem 1.3rem;
-    transition: 0.2s ease;
-    font-weight: 500;
-    margin-bottom: 20px;
-
-    svg {
-      margin-right: 2px;
-    }
-
-    &:hover {
-      opacity: 0.7;
-      transform: translateY(-2px);
-    }
-  }
-
-  #statistics-section {
-    font-family: "Poppins";
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 2px;
-
-    a {
-      text-decoration: none;
-    }
-
-    .statistic-container {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 5px 25px;
-      position: relative;
-
-      &:not(:last-child)::after {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        width: 1px;
-        height: 20px;
-        content: "";
-        transform: translateY(-50%);
-        background: #dfdfe0;
-        transition: 0.2s ease;
-      }
-
-      .statistic-title {
-        font-size: 14px;
-        color: #7f7f7f;
-        transition: 0.2s ease;
-      }
-
-      .statistic-value {
-        font-size: 24px;
-        color: #2c343e;
-        transition: 0.2s ease;
-      }
-
-      &:hover {
-        .statistic-title {
-          color: #2c343e;
-        }
-
-        .statistic-value {
-          color: black;
-        }
-
-        &::after {
-          background-color: #636363;
-        }
-      }
-    }
-  }
-
-  #navigator-container {
-    width: 100%;
-
-    .counter {
-      padding-left: 2px;
-      color: #7f7f7f;
-      font-size: 14px;
-    }
-  }
-`;
+interface ProfileNavigator {
+  galleryCount: number;
+  collectionCount: number;
+  followerCount: number;
+  followingCount: number;
+}
 
 export const Profile: React.FC = () => {
   const { user } = useAuth();
@@ -143,6 +24,18 @@ export const Profile: React.FC = () => {
 
   const [profileInfo, setProfileInfo] = useState<IUser>();
   const [page, setPage] = useState<"Gallery" | "Collections">("Gallery");
+
+  const [navigatorInfo, setNavigatorInfo] = useState<ProfileNavigator>({
+    galleryCount: 0,
+    collectionCount: 0,
+    followerCount: 0,
+    followingCount: 0,
+  });
+
+  useEffect(() => {
+    //Scroll up for when redirected from another page
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   useEffect(() => {
     if (!uid) {
@@ -155,16 +48,30 @@ export const Profile: React.FC = () => {
       fetchUser(uid.substring(1))
         .then((result: IUser) => {
           setProfileInfo(result);
-          console.log(result);
         })
         .catch((err) => console.error(err));
     }
-  }, [uid]);
+  }, [uid, user]);
+
+  useEffect(() => {
+    if (profileInfo) {
+      setNavigatorInfo({
+        galleryCount: profileInfo.gallery
+          ? Object.keys(profileInfo.gallery).length
+          : 0,
+        collectionCount: profileInfo.collections
+          ? Object.keys(profileInfo.collections).length
+          : 0,
+        followerCount: profileInfo.totalFollowers,
+        followingCount: profileInfo.totalFollowing,
+      });
+    }
+  }, [profileInfo]);
 
   let renderedScreen;
   switch (page) {
     case "Gallery":
-      renderedScreen = <Gallery uid={profileInfo?.uid} />;
+      renderedScreen = <Gallery user={profileInfo} />;
       break;
     case "Collections":
       renderedScreen = <></>;
@@ -190,9 +97,12 @@ export const Profile: React.FC = () => {
             </>
           )}
         </div>
-        <Link id="edit-profile" to="/edit-profile">
-          <RiPencilFill size={24}></RiPencilFill>Edit Profile
-        </Link>
+        {user && uid && user.uid === uid ? (
+          <Link id="edit-profile" to="/edit-profile">
+            <RiPencilFill size={24}></RiPencilFill>Edit Profile
+          </Link>
+        ) : null}
+
         <div id="statistics-section">
           <Link to="stats" className="statistic-container">
             <span className="statistic-title">Total views</span>
@@ -215,30 +125,22 @@ export const Profile: React.FC = () => {
               onClick={() => setPage("Gallery")}
               className={page === "Gallery" ? "selected" : ""}>
               Gallery{" "}
-              <span className="counter">
-                {profileInfo?.gallery?.length || 0}
-              </span>
+              <span className="counter">{navigatorInfo.galleryCount}</span>
             </li>
             <li
               onClick={() => setPage("Collections")}
               className={page === "Collections" ? "selected" : ""}>
               Collections{" "}
-              <span className="counter">
-                {profileInfo?.collections?.length || 0}
-              </span>
+              <span className="counter">{navigatorInfo.collectionCount}</span>
             </li>
             <li>Statistics</li>
             <li>
               Followers{" "}
-              <span className="counter">
-                {profileInfo?.totalFollowers || 0}
-              </span>
+              <span className="counter">{navigatorInfo.followerCount}</span>
             </li>
             <li>
               Following{" "}
-              <span className="counter">
-                {profileInfo?.totalFollowing || 0}
-              </span>
+              <span className="counter">{navigatorInfo.followingCount}</span>
             </li>
           </Navigator>
         </div>

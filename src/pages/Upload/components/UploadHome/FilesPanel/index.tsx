@@ -1,24 +1,14 @@
-import styled from "styled-components";
 import { FileOutliner } from "./FileOutliner";
-
-import { createRef, useEffect, useRef, useState } from "react";
+import { createRef, useRef, useState } from "react";
 import { ImageCard } from "./ImageCard";
 import { UploadBar } from "./UploadBar";
 import { createPortal } from "react-dom";
 import { UploadModal } from "./UploadModal";
-import { uploadImage } from "../../../../services/firebase";
-import { useAuth } from "../../../../contexts/AuthContext";
-import { IStageFile } from "../../../../interfaces";
+import { uploadImage } from "../../../../../services/firebase";
+import { useAuth } from "../../../../../contexts/AuthContext";
+import { IStageFile } from "../../../../../interfaces";
+import { StyledFilesPanel } from "./styles";
 
-const StyledFilesPanel = styled.div`
-  display: flex;
-  gap: 80px;
-
-  @media (max-width: 900px) {
-    flex-direction: column;
-    gap: 20px;
-  }
-`;
 type FilesPanelProps = {
   files: IStageFile[];
   handleUpload: () => void;

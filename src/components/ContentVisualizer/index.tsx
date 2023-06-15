@@ -1,8 +1,14 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { IoCloseOutline } from "react-icons/io5";
+import { IoCloseOutline, IoPersonCircle } from "react-icons/io5";
 import { detectClickOutside } from "../../utils/detectClickOutside";
-import { StyledContentVisualizer } from "./styles";
+import { StyledContentVisualizer, StyledDownloadOptions } from "./styles";
 import {
   AiFillCheckCircle,
   AiOutlineHeart,
@@ -11,21 +17,100 @@ import {
 import { BiBookmarks } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { BsFillInfoCircleFill } from "react-icons/bs";
-import { FiShare2 } from "react-icons/fi";
-import { IPhoto } from "../../interfaces";
+import { FiHeart, FiShare2 } from "react-icons/fi";
+import { IPhoto, IUser } from "../../interfaces";
+import { listenForUser, setImageLike } from "../../services/firebase";
+import { useAuth } from "../../contexts/AuthContext";
+import { Tooltip } from "../Tooltip";
+import { downloadURL } from "../../utils/downloadURI";
 
 interface ContentVisualizerProps {
   content: IPhoto;
   hideVisualizer: Function;
 }
 
-export const ContentVisualizer = ({
+const DownloadOptions: React.FC<{ imageInfo: IPhoto }> = ({ imageInfo }) => {
+  const [selected, setSelected] = useState<string>("");
+
+  const handleDownload = () => {
+    if (selected !== "") {
+      switch (selected) {
+        case "Original":
+          downloadURL(imageInfo.original, "Pexels Image.png");
+          break;
+        case "Medium":
+          downloadURL(imageInfo.medium, "Pexels Image.png");
+          break;
+        case "Small":
+          downloadURL(imageInfo.small, "Pexels Image.png");
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  return (
+    <StyledDownloadOptions>
+      <div className="title">Choose a size:</div>
+      <ul className="options">
+        <li
+          className={`option-item${selected === "Original" ? " selected" : ""}`}
+          onClick={() => setSelected("Original")}>
+          Original
+        </li>
+        <li
+          className={`option-item${selected === "Medium" ? " selected" : ""}`}
+          onClick={() => setSelected("Medium")}>
+          Medium
+        </li>
+        <li
+          className={`option-item${selected === "Small" ? " selected" : ""}`}
+          onClick={() => setSelected("Small")}>
+          Small
+        </li>
+      </ul>
+      <div className="download-btn-container">
+        <button
+          className="download-btn full"
+          disabled={selected === ""}
+          onClick={() => handleDownload()}>
+          Download Selected Size
+        </button>
+      </div>
+    </StyledDownloadOptions>
+  );
+};
+
+export const ContentVisualizer: React.FC<ContentVisualizerProps> = ({
   content,
   hideVisualizer,
-}: ContentVisualizerProps): JSX.Element => {
+}) => {
   const [zoomed, setZoomed] = useState(false);
   const popupElement = useRef(null);
+  const [photographer, setPhotographer] = useState<IUser>();
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const { user } = useAuth();
 
+  useEffect(() => {
+    return listenForUser(content.photographerUID, (snapshot) => {
+      setPhotographer(snapshot.val());
+    });
+  }, []);
+
+  const liked = useMemo(() => {
+    if (user && user.likes) {
+      if (user.likes[content.uid]) return true;
+    }
+    return false;
+  }, [user]);
+
+  const handleLike = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    if (user) {
+      setImageLike(content.uid, user.uid, !liked);
+    }
+  };
   const closeVisualizer = () => {
     if (zoomed) {
       setZoomed(false);
@@ -107,14 +192,29 @@ export const ContentVisualizer = ({
         <div id="popup-header">
           <div id="author-info" className="hide-mobile">
             <div id="author-image">
-              <img src="https://lh3.googleusercontent.com/a-/AOh14GgiWS7fc0Qr3hY_qguvGVzfeDx-lM6ATyRAKV7Fcw=s96-c"></img>
+              {photographer && photographer.photoURL ? (
+                <Link to={`/profile:${photographer.uid}`}>
+                  <img
+                    alt="user"
+                    src={photographer.photoURL}
+                    referrerPolicy="no-referrer"></img>
+                </Link>
+              ) : photographer ? (
+                <Link to={`/profile:${photographer.uid}`}>
+                  <IoPersonCircle size="54px" />
+                </Link>
+              ) : (
+                <IoPersonCircle size="54px" />
+              )}
             </div>
             <div id="author-details">
-              {/* <div id="author-title">
-                <Link to={content.photographer_url}>
-                  {content.photographer}
-                </Link>
-              </div> */}
+              <div id="author-title">
+                {photographer && (
+                  <Link to={`/profile:${photographer.uid}`}>
+                    {photographer.displayName}
+                  </Link>
+                )}
+              </div>
               <div id="follow-container">
                 <button id="follow-btn">Follow</button>
               </div>
@@ -125,14 +225,27 @@ export const ContentVisualizer = ({
               <BiBookmarks size={22} />
               Collect
             </button>
-            <button className="like-btn">
-              <AiOutlineHeart size={22} />
-              Like <span id="like-count">54</span>
+            <button
+              onClick={(e) => handleLike(e)}
+              className={`like-btn${liked ? " liked" : ""}`}>
+              <FiHeart size={22} />
+              Like <span id="like-count">{content.likes}</span>
             </button>
-            <button className="download-btn">Free download</button>
-            <button className="download-options-btn">
-              <IoIosArrowDown></IoIosArrowDown>
+            <button
+              className="download-btn"
+              onClick={() => {
+                downloadURL(content.medium, "Pexels Image.png");
+              }}>
+              Free download
             </button>
+            <Tooltip
+              tooltipContent={<DownloadOptions imageInfo={content} />}
+              activateOn="click"
+              arrowOptions={{ top: -2 }}>
+              <button className="download-options-btn">
+                <IoIosArrowDown></IoIosArrowDown>
+              </button>
+            </Tooltip>
           </div>
           <div className="header-buttons show-mobile">
             <button className="collect-btn">
@@ -151,11 +264,21 @@ export const ContentVisualizer = ({
         </div>
         <div id="popup-content">
           <div id="image-container">
-            {/* <img src={content.src.original} onClick={(e) => handleZoom(e)} /> */}
+            <img
+              src={content.original}
+              onClick={(e) => handleZoom(e)}
+              className={imageLoaded ? "show" : "hide"}
+              onLoad={() => setImageLoaded(true)}
+            />
+            <img
+              src={content.blur}
+              onClick={(e) => handleZoom(e)}
+              className={imageLoaded ? "hide" : "show"}
+            />
           </div>
         </div>
         <div id="image-footer">
-          <a id="free-use-btn" href="/license">
+          <a id="free-use-btn">
             <AiFillCheckCircle size={18}></AiFillCheckCircle>Free to use
           </a>
           <div id="image-footer-controls">
@@ -172,10 +295,21 @@ export const ContentVisualizer = ({
         <div id="author-panel">
           <div id="author-info-mobile">
             <div id="author-image-mobile">
-              <img src="https://lh3.googleusercontent.com/a-/AOh14GgiWS7fc0Qr3hY_qguvGVzfeDx-lM6ATyRAKV7Fcw=s96-c"></img>
+              {photographer && photographer.photoURL ? (
+                <img
+                  alt="user"
+                  src={photographer.photoURL}
+                  referrerPolicy="no-referrer"></img>
+              ) : (
+                <IoPersonCircle size="40px" />
+              )}
             </div>
             <div id="author-title-mobile">
-              {/* <Link to={content.photographer_url}>{content.photographer}</Link> */}
+              {photographer && (
+                <Link to={`/profile:${photographer.uid}`}>
+                  {photographer.displayName}
+                </Link>
+              )}
             </div>
           </div>
           <div id="author-mobile-controls">
