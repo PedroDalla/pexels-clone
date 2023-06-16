@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { AuthForm } from "../../components/AuthForm";
 import { NavAuth } from "../../components/NavAuth";
-import { AiFillFacebook, AiFillGoogleCircle } from "react-icons/ai";
+import { AiFillGoogleCircle } from "react-icons/ai";
 import { Banner } from "./components/Banner";
 import { useAuth } from "../../contexts/AuthContext";
 import { useEffect, useState } from "react";

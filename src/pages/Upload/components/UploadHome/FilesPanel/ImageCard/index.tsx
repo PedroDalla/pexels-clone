@@ -36,8 +36,8 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
     ) => {
       let error = false;
       let message = undefined;
-      let width = e.currentTarget.naturalWidth;
-      let height = e.currentTarget.naturalHeight;
+      const width = e.currentTarget.naturalWidth;
+      const height = e.currentTarget.naturalHeight;
       if ((width * height) / 1000000 < 2) {
         error = true;
         message =
@@ -107,7 +107,7 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
       e: React.ChangeEvent<HTMLInputElement>,
       field: "title" | "location" | "tags"
     ) => {
-      let newFile = file;
+      const newFile = file;
       newFile.optionalDetails[field] = e.target.value;
       return updateImage(newFile, imageIndex);
     };
@@ -118,6 +118,7 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
           <div className="image-container">
             <img
               src={file.dataUrl}
+              alt={file.data.name}
               onLoad={(e) => handleImageLoad(e, file, imageIndex)}></img>
           </div>
           <button

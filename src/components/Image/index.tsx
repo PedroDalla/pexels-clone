@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 interface ImageProps {
   imageInfo: IPhoto;
-  setIndex: Function;
+  setIndex: () => void;
 }
 
 export const Image: FC<ImageProps> = ({ imageInfo, setIndex }) => {
@@ -30,7 +30,7 @@ export const Image: FC<ImageProps> = ({ imageInfo, setIndex }) => {
     return listenForUser(imageInfo.photographerUID, (snapshot) => {
       setPhotographer(snapshot.val());
     });
-  }, []);
+  }, [imageInfo.photographerUID]);
 
   const handleLike = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
@@ -44,7 +44,9 @@ export const Image: FC<ImageProps> = ({ imageInfo, setIndex }) => {
       onClick={() => {
         setIndex();
       }}>
-      <img src={imageInfo.small}></img>
+      <img
+        src={imageInfo.small}
+        alt={photographer?.displayName + "'s photograph" || ""}></img>
       <div id="photo-controls">
         <div id="controls-header" className="control-buttons">
           <button>
@@ -57,16 +59,19 @@ export const Image: FC<ImageProps> = ({ imageInfo, setIndex }) => {
           </button>
         </div>
         <div id="controls-footer">
-          <a
+          <span
             id="author-link"
-            onClick={() => navigate("/profile:" + imageInfo.photographerUID)}>
+            role="link"
+            tabIndex={-1}
+            onClick={() => navigate("/profile/" + imageInfo.photographerUID)}
+            onKeyDown={() => navigate("/profile/" + imageInfo.photographerUID)}>
             {photographer?.photoURL ? (
               <img src={photographer.photoURL} alt="Author"></img>
             ) : (
               <IoPersonCircle size="44px" />
             )}
             <span>{photographer?.displayName}</span>
-          </a>
+          </span>
           <div className="control-buttons">
             <button
               onClick={(e) => {

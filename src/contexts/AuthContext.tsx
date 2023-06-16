@@ -10,7 +10,7 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
 } from "firebase/auth";
-import { ref, get, set, onValue } from "firebase/database";
+import { ref, set, onValue } from "firebase/database";
 import { IUser } from "../interfaces";
 
 type User = IUser;
@@ -62,9 +62,10 @@ export const AuthContextProvider: React.FC = ({ children }) => {
     name?: string,
     lastName?: string
   ) => {
-    let reference = ref(db, `users/${userInfo.uid}`);
+    const reference = ref(db, `users/${userInfo.uid}`);
     try {
-      let { displayName, email, phoneNumber, photoURL, uid } = userInfo;
+      let { displayName } = userInfo;
+      const { email, phoneNumber, photoURL, uid } = userInfo;
       if (name) {
         if (lastName) {
           displayName = name + " " + lastName;
@@ -82,13 +83,14 @@ export const AuthContextProvider: React.FC = ({ children }) => {
       };
       await set(reference, newUserObject);
       setUser(newUserObject);
-    } catch (err: any) {
-      throw new Error(err);
+    } catch (err: unknown) {
+      console.error(err);
+      throw new Error("Error writing user data!");
     }
   };
 
   const handleLogin = (userInfo: UserInfo, onError: (err: Error) => void) => {
-    let reference = ref(db, `users/${userInfo.uid}`);
+    const reference = ref(db, `users/${userInfo.uid}`);
     return onValue(
       reference,
       (result) => {
@@ -122,27 +124,34 @@ export const AuthContextProvider: React.FC = ({ children }) => {
     lastName?: string
   ): Promise<boolean> => {
     try {
-      let result = await createUserWithEmailAndPassword(auth, email, password);
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       if (result.user) {
         try {
           await createUser(result.user, name, lastName);
-        } catch (err: any) {
-          throw new Error(err);
+        } catch (err: unknown) {
+          console.error(err);
+          throw new Error("Error writing user data");
         }
         return true;
       } else {
         return false;
       }
-    } catch (err: any) {
-      throw new Error(err);
+    } catch (err: unknown) {
+      console.error(err);
+      throw new Error("Error on account creation");
     }
   };
 
   const Login = async (email: string, password: string): Promise<void> => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
-    } catch (err: any) {
-      throw new Error(err);
+    } catch (err: unknown) {
+      console.error(err);
+      throw new Error("Error on sign-in");
     }
   };
 

@@ -20,10 +20,10 @@ export const Login = (): JSX.Element => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      let result = await auth.functions.Login(form.email, form.password);
+      const result = await auth.functions.Login(form.email, form.password);
       console.log(result);
-    } catch (err: any) {
-      console.log({ err });
+    } catch (err: unknown) {
+      console.log(err);
       setError(true);
     }
   };

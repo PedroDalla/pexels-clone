@@ -154,6 +154,7 @@ export const StyledUploadModal = styled.div`
     font-weight: 600;
     letter-spacing: 0.3px;
     max-width: fit-content;
+    text-decoration: none;
 
     cursor: pointer;
 

@@ -12,6 +12,10 @@ export interface IPhoto {
   key?: string;
 }
 
+export interface IGalleryResult {
+  [index: string]: IPhoto;
+}
+
 export interface IUser {
   displayName: string | null;
   email: string | null;

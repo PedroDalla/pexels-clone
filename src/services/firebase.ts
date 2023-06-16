@@ -8,6 +8,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import {
+  DataSnapshot,
   get,
   getDatabase,
   limitToFirst,
@@ -19,10 +20,16 @@ import {
   set,
   startAt,
 } from "firebase/database";
-import { IUser, IPhoto, IStageFile, IUploadFile } from "../interfaces";
+import {
+  IUser,
+  IStageFile,
+  IUploadFile,
+  IGalleryResult,
+  IPhoto,
+} from "../interfaces";
 import { v4 as uuid } from "uuid";
 
-var firebaseConfiguration = {
+const firebaseConfiguration = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
   databaseURL: process.env.REACT_APP_DATABASE_URL,
@@ -33,7 +40,7 @@ var firebaseConfiguration = {
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
-let app = initializeApp(firebaseConfiguration);
+const app = initializeApp(firebaseConfiguration);
 const auth = getAuth(app);
 const db = getDatabase(app);
 const storage = getStorage(app);
@@ -43,7 +50,7 @@ export { auth, db, storage };
 const storageRef = strRef(storage);
 
 export async function fetchUser(user_uid: string) {
-  let reference = ref(db, `users/${user_uid}`);
+  const reference = ref(db, `users/${user_uid}`);
   try {
     const result = await get(reference);
     const parsed = result.val();
@@ -52,13 +59,17 @@ export async function fetchUser(user_uid: string) {
     } else {
       throw new Error("No user was found!");
     }
-  } catch (err: any) {
-    throw new Error(err);
+  } catch (err: unknown) {
+    console.error(err);
+    throw new Error("Error!");
   }
 }
 
-export function listenForUser(user_uid: string, onUpdate: (val: any) => void) {
-  let reference = ref(db, `users/${user_uid}`);
+export function listenForUser(
+  user_uid: string,
+  onUpdate: (val: DataSnapshot) => void
+) {
+  const reference = ref(db, `users/${user_uid}`);
 
   return onValue(reference, (val) => onUpdate(val));
 }
@@ -66,9 +77,9 @@ export function listenForUser(user_uid: string, onUpdate: (val: any) => void) {
 export async function fetchImagesPaginated(
   pageSize: number,
   startAtKey?: string | null
-): Promise<any[]> {
+): Promise<IPhoto[]> {
   // Query the data
-  let reference = ref(db, "gallery");
+  const reference = ref(db, "gallery");
   let imagesQuery;
   if (startAtKey) {
     imagesQuery = query(
@@ -84,23 +95,26 @@ export async function fetchImagesPaginated(
   // Fetch the data
   try {
     const snapshot = await get(imagesQuery);
-    const data = snapshot.val();
+    const data: IGalleryResult = snapshot.val();
 
     // Convert the snapshot data to an array
     if (data) {
-      const dataArray = Object.keys(data).map((key) => ({ key, ...data[key] }));
+      const dataArray: IPhoto[] = Object.keys(data).map((key) => ({
+        key,
+        ...data[key],
+      }));
       return dataArray;
     } else {
       throw new Error("Empty data array!");
     }
   } catch (err) {
     console.error(err);
-    throw new Error("Unkown error");
+    throw new Error("Error fetching images");
   }
 }
 
 export async function fetchUserGallery(user_uid: string) {
-  let reference = ref(db, `users/${user_uid}/gallery`);
+  const reference = ref(db, `users/${user_uid}/gallery`);
   try {
     const result = await get(reference);
     const parsed = result.val();
@@ -109,15 +123,22 @@ export async function fetchUserGallery(user_uid: string) {
     } else {
       throw new Error("No user was found!");
     }
-  } catch (err: any) {
-    throw new Error(err);
+  } catch (err: unknown) {
+    console.error(err);
+    throw new Error("Error when fetching users");
   }
 }
 
-export function listenForImage(img_uid: string, onUpdate: (val: any) => void) {
-  let reference = ref(db, `gallery/${img_uid}`);
+export function listenForImage(
+  img_uid: string,
+  onUpdate: (val: IPhoto) => void
+) {
+  const reference = ref(db, `gallery/${img_uid}`);
 
-  return onValue(reference, (val) => onUpdate(val));
+  return onValue(reference, (snapshot: DataSnapshot) => {
+    const value: IPhoto = snapshot.val();
+    onUpdate(value);
+  });
 }
 
 export async function setImageLike(
@@ -125,8 +146,8 @@ export async function setImageLike(
   user_uid: string,
   like: boolean
 ) {
-  let imageReference = ref(db, `gallery/${img_uid}/likes`);
-  let userLikeReference = ref(db, `users/${user_uid}/likes/${img_uid}`);
+  const imageReference = ref(db, `gallery/${img_uid}/likes`);
+  const userLikeReference = ref(db, `users/${user_uid}/likes/${img_uid}`);
   try {
     const img = await get(imageReference);
     const parsedImg = img.val();
@@ -138,8 +159,9 @@ export async function setImageLike(
     } else {
       throw new Error("No image was found!");
     }
-  } catch (err: any) {
-    throw new Error(err);
+  } catch (err) {
+    console.error(err);
+    throw new Error("Error fetching user");
   }
 }
 

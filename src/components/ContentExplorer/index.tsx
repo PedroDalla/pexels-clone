@@ -20,11 +20,11 @@ export const ContentExplorer: React.FC<ContentExplorerProps> = ({
   const [index, setIndex] = useState<number | null>(null);
 
   const columns: Array<JSX.Element[]> = useMemo(() => {
-    let cols: Array<JSX.Element[]> = [];
+    const cols: Array<JSX.Element[]> = [];
     if (images) {
       images.forEach((image, i) => {
         if (image) {
-          let mod = i % columnCount;
+          const mod = i % columnCount;
 
           const imageElement = (
             <Image imageInfo={image} setIndex={() => setIndex(i)} key={i} />

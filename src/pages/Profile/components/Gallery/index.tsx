@@ -10,11 +10,11 @@ export const Gallery: React.FC<{ user?: IUser }> = ({ user }) => {
 
   useEffect(() => {
     if (user && user.gallery) {
-      let unsubscribeArr: Unsubscribe[] = [];
-      for (let v in user.gallery) {
+      const unsubscribeArr: Unsubscribe[] = [];
+      for (const v in user.gallery) {
         unsubscribeArr.push(
           listenForImage(user.gallery[v].uid, (imageSnapshot) => {
-            let image = imageSnapshot.val();
+            const image = imageSnapshot;
             setImages((prevImages) => {
               const index = prevImages.findIndex(
                 (img) => img && user.gallery && img.uid === user.gallery[v].uid

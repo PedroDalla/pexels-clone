@@ -58,14 +58,14 @@ export const Upload: React.FC = () => {
 
   //Replaces a specific image object with new value
   const updateImage = (data: IStageFile, index: number) => {
-    let newData = [...uploadFiles];
+    const newData = [...uploadFiles];
     newData[index] = data;
     setUploadFiles(newData);
   };
 
   //Removes an index from the image list
   const deleteImage = (index: number) => {
-    let newData = [...uploadFiles];
+    const newData = [...uploadFiles];
     newData.splice(index, 1);
     setUploadFiles(newData);
   };

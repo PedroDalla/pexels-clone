@@ -3,7 +3,6 @@ import {
   StyledProfilePicture,
   StyledTooltipContent,
 } from "./styles";
-import { BsThreeDots } from "react-icons/bs";
 import { IoPersonCircle } from "react-icons/io5";
 import { Tooltip } from "../Tooltip";
 import {
@@ -37,12 +36,15 @@ const TooltipContent: React.FC<{ auth: AuthContext }> = ({ auth }) => {
               <button onClick={() => navigate("/upload")}>Upload</button>
             </li>
             <li>
-              <button onClick={() => navigate("/profile:" + auth.user?.uid)}>
+              <button onClick={() => navigate("/profile/" + auth.user?.uid)}>
                 Your Profile
               </button>
             </li>
             <li>
-              <button onClick={() => navigate("/profile")}>
+              <button
+                onClick={() =>
+                  navigate("/profile/" + auth.user?.uid + "/collections")
+                }>
                 Your Collections
               </button>
             </li>

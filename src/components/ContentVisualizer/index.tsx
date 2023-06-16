@@ -26,61 +26,8 @@ import { downloadURL } from "../../utils/downloadURI";
 
 interface ContentVisualizerProps {
   content: IPhoto;
-  hideVisualizer: Function;
+  hideVisualizer: () => void;
 }
-
-const DownloadOptions: React.FC<{ imageInfo: IPhoto }> = ({ imageInfo }) => {
-  const [selected, setSelected] = useState<string>("");
-
-  const handleDownload = () => {
-    if (selected !== "") {
-      switch (selected) {
-        case "Original":
-          downloadURL(imageInfo.original, "Pexels Image.png");
-          break;
-        case "Medium":
-          downloadURL(imageInfo.medium, "Pexels Image.png");
-          break;
-        case "Small":
-          downloadURL(imageInfo.small, "Pexels Image.png");
-          break;
-        default:
-          break;
-      }
-    }
-  };
-
-  return (
-    <StyledDownloadOptions>
-      <div className="title">Choose a size:</div>
-      <ul className="options">
-        <li
-          className={`option-item${selected === "Original" ? " selected" : ""}`}
-          onClick={() => setSelected("Original")}>
-          Original
-        </li>
-        <li
-          className={`option-item${selected === "Medium" ? " selected" : ""}`}
-          onClick={() => setSelected("Medium")}>
-          Medium
-        </li>
-        <li
-          className={`option-item${selected === "Small" ? " selected" : ""}`}
-          onClick={() => setSelected("Small")}>
-          Small
-        </li>
-      </ul>
-      <div className="download-btn-container">
-        <button
-          className="download-btn full"
-          disabled={selected === ""}
-          onClick={() => handleDownload()}>
-          Download Selected Size
-        </button>
-      </div>
-    </StyledDownloadOptions>
-  );
-};
 
 export const ContentVisualizer: React.FC<ContentVisualizerProps> = ({
   content,
@@ -93,9 +40,10 @@ export const ContentVisualizer: React.FC<ContentVisualizerProps> = ({
   const { user } = useAuth();
 
   useEffect(() => {
-    return listenForUser(content.photographerUID, (snapshot) => {
+    const unsubscribe = listenForUser(content.photographerUID, (snapshot) => {
       setPhotographer(snapshot.val());
     });
+    return () => unsubscribe();
   }, []);
 
   const liked = useMemo(() => {
@@ -131,7 +79,7 @@ export const ContentVisualizer: React.FC<ContentVisualizerProps> = ({
 
   //Image zooming functionality
   const onMouseMove = useCallback(
-    (event: MouseEvent, image: EventTarget & HTMLImageElement) => {
+    (event: MouseEvent, image: EventTarget & HTMLElement) => {
       const X = (event.clientX * 100) / document.body.clientWidth;
       const Y = (event.clientY * 100) / document.body.clientHeight;
       image.style.transform = `scale(3) translate(${-(X - 50)}%, ${-(
@@ -143,41 +91,52 @@ export const ContentVisualizer: React.FC<ContentVisualizerProps> = ({
 
   const mouseMoveWrapper = useRef<(event: MouseEvent) => void>();
 
-  const handleZoom = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
-    const image = e.currentTarget;
+  const handleZoom = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const child = e.currentTarget.firstChild;
+    let image: HTMLImageElement | null = null;
+    if (child && child instanceof HTMLImageElement) {
+      image = child;
+    }
 
     const disableZoom = () => {
-      if (mouseMoveWrapper.current) {
-        document.body.removeEventListener(
-          "mousemove",
-          mouseMoveWrapper.current
-        );
+      if (image) {
+        if (mouseMoveWrapper.current) {
+          document.body.removeEventListener(
+            "mousemove",
+            mouseMoveWrapper.current
+          );
+        }
+        image.style.transform = "none";
+        image.style.cursor = "zoom-in";
+        setZoomed(false);
+      } else {
+        setZoomed(false);
       }
-      image.style.transform = "none";
-      image.style.cursor = "zoom-in";
-      setZoomed(false);
     };
     if (zoomed) {
       disableZoom();
     } else {
-      mouseMoveWrapper.current = (event: MouseEvent) =>
-        onMouseMove(event, image);
+      if (image) {
+        mouseMoveWrapper.current = (event: MouseEvent) => {
+          if (image) return onMouseMove(event, image);
+        };
 
-      const X = (e.clientX * 100) / document.body.clientWidth;
-      const Y = (e.clientY * 100) / document.body.clientHeight;
-      image.style.transform = `scale(3) translate(${-(X - 50)}%, ${-(
-        Y - 50
-      )}%)`;
-      image.style.cursor = "zoom-out";
+        const X = (e.clientX * 100) / document.body.clientWidth;
+        const Y = (e.clientY * 100) / document.body.clientHeight;
+        image.style.transform = `scale(3) translate(${-(X - 50)}%, ${-(
+          Y - 50
+        )}%)`;
+        image.style.cursor = "zoom-out";
 
-      const handleBodyClick = (e: MouseEvent) => {
-        e.preventDefault();
-        document.body.removeEventListener("click", handleBodyClick);
-        disableZoom();
-      };
-      document.body.addEventListener("mousemove", mouseMoveWrapper.current);
-      document.body.addEventListener("click", handleBodyClick);
-      setZoomed(true);
+        const handleBodyClick = (e: MouseEvent) => {
+          e.preventDefault();
+          document.body.removeEventListener("mousedown", handleBodyClick);
+          disableZoom();
+        };
+        document.body.addEventListener("mousemove", mouseMoveWrapper.current);
+        document.body.addEventListener("mousedown", handleBodyClick);
+        setZoomed(true);
+      }
     }
   };
 
@@ -263,24 +222,28 @@ export const ContentVisualizer: React.FC<ContentVisualizerProps> = ({
           </div>
         </div>
         <div id="popup-content">
-          <div id="image-container">
+          <div
+            id="image-container"
+            role="button"
+            onMouseDown={(e) => handleZoom(e)}
+            tabIndex={-1}
+            className={imageLoaded ? "show" : "hide"}>
             <img
-              src={content.original}
-              onClick={(e) => handleZoom(e)}
-              className={imageLoaded ? "show" : "hide"}
-              onLoad={() => setImageLoaded(true)}
-            />
-            <img
+              alt=""
               src={content.blur}
-              onClick={(e) => handleZoom(e)}
               className={imageLoaded ? "hide" : "show"}
             />
+            <img
+              src={content.original}
+              alt=""
+              className={imageLoaded ? "show" : "hide"}
+              onLoad={() => setImageLoaded(true)}></img>
           </div>
         </div>
         <div id="image-footer">
-          <a id="free-use-btn">
+          <span id="free-use-btn">
             <AiFillCheckCircle size={18}></AiFillCheckCircle>Free to use
-          </a>
+          </span>
           <div id="image-footer-controls">
             <button id="more-info-btn">
               <BsFillInfoCircleFill size={18}></BsFillInfoCircleFill>
@@ -321,5 +284,76 @@ export const ContentVisualizer: React.FC<ContentVisualizerProps> = ({
         </div>
       </div>
     </StyledContentVisualizer>
+  );
+};
+
+const DownloadOptions: React.FC<{ imageInfo: IPhoto }> = ({ imageInfo }) => {
+  const [selected, setSelected] = useState<string>("");
+
+  const handleDownload = () => {
+    if (selected !== "") {
+      switch (selected) {
+        case "Original":
+          downloadURL(imageInfo.original, "Pexels Image.png");
+          break;
+        case "Medium":
+          downloadURL(imageInfo.medium, "Pexels Image.png");
+          break;
+        case "Small":
+          downloadURL(imageInfo.small, "Pexels Image.png");
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  return (
+    <StyledDownloadOptions>
+      <div className="title">Choose a size:</div>
+      <ul className="options">
+        <li
+          className={`option-item${
+            selected === "Original" ? " selected" : ""
+          }`}>
+          <span
+            onClick={() => setSelected("Original")}
+            onKeyDown={(e) => e.key === "Enter" && setSelected("Original")}
+            tabIndex={-1}
+            role="link">
+            Original
+          </span>
+        </li>
+
+        <li
+          className={`option-item${selected === "Medium" ? " selected" : ""}`}>
+          <span
+            onClick={() => setSelected("Medium")}
+            onKeyDown={(e) => e.key === "Enter" && setSelected("Medium")}
+            tabIndex={-1}
+            role="link">
+            Medium
+          </span>
+        </li>
+
+        <li className={`option-item${selected === "Small" ? " selected" : ""}`}>
+          <span
+            onClick={() => setSelected("Small")}
+            onKeyDown={(e) => e.key === "Enter" && setSelected("Small")}
+            tabIndex={-1}
+            role="link">
+            Small
+          </span>
+        </li>
+      </ul>
+      <div className="download-btn-container">
+        <button
+          className="download-btn full"
+          disabled={selected === ""}
+          onClick={() => handleDownload()}>
+          Download Selected Size
+        </button>
+      </div>
+    </StyledDownloadOptions>
   );
 };

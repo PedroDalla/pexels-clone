@@ -57,7 +57,7 @@ export const FilesPanel: React.FC<FilesPanelProps> = ({
     };
 
     const handleProgress = (value: number, index: number) => {
-      let newProgress = [...progress];
+      const newProgress = [...progress];
       newProgress[index] = value;
       setProgress(newProgress);
     };

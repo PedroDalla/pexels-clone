@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { IoPersonCircle } from "react-icons/io5";
 import { RiPencilFill } from "react-icons/ri";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Nav } from "../../components/Nav";
 import { useAuth } from "../../contexts/AuthContext";
 import { IUser } from "../../interfaces";
@@ -20,7 +20,6 @@ interface ProfileNavigator {
 export const Profile: React.FC = () => {
   const { user } = useAuth();
   const { uid } = useParams();
-  const navigate = useNavigate();
 
   const [profileInfo, setProfileInfo] = useState<IUser>();
   const [page, setPage] = useState<"Gallery" | "Collections">("Gallery");
@@ -38,14 +37,8 @@ export const Profile: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!uid) {
-      if (user) {
-        setProfileInfo(user);
-      } else {
-        navigate("/login");
-      }
-    } else {
-      fetchUser(uid.substring(1))
+    if (uid) {
+      fetchUser(uid)
         .then((result: IUser) => {
           setProfileInfo(result);
         })
@@ -121,17 +114,26 @@ export const Profile: React.FC = () => {
         </div>
         <div id="navigator-container">
           <Navigator>
-            <li
-              onClick={() => setPage("Gallery")}
-              className={page === "Gallery" ? "selected" : ""}>
-              Gallery{" "}
-              <span className="counter">{navigatorInfo.galleryCount}</span>
+            <li className={page === "Gallery" ? "selected" : ""}>
+              <span
+                role="link"
+                tabIndex={-1}
+                onClick={() => setPage("Gallery")}
+                onKeyDown={() => setPage("Gallery")}>
+                Gallery{" "}
+                <span className="counter">{navigatorInfo.galleryCount}</span>
+              </span>
             </li>
-            <li
-              onClick={() => setPage("Collections")}
-              className={page === "Collections" ? "selected" : ""}>
-              Collections{" "}
-              <span className="counter">{navigatorInfo.collectionCount}</span>
+            <li>
+              <span
+                onClick={() => setPage("Collections")}
+                onKeyDown={() => setPage("Collections")}
+                role="link"
+                tabIndex={-2}
+                className={page === "Collections" ? "selected" : ""}>
+                Collections{" "}
+                <span className="counter">{navigatorInfo.collectionCount}</span>
+              </span>
             </li>
             <li>Statistics</li>
             <li>

@@ -6,7 +6,7 @@ interface LogoProps {
 }
 
 export const Logo = ({ mode }: LogoProps): JSX.Element => {
-  let size = mode === "large" ? 47 : 53;
+  const size = mode === "large" ? 47 : 53;
   return (
     <Link to="/">
       <StyledLogo size={size}>

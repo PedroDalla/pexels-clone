@@ -2,82 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { AiOutlineArrowRight, AiOutlineCheck } from "react-icons/ai";
 import { IoCloseOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../../../../../contexts/AuthContext";
 import { detectClickOutside } from "../../../../../../utils/detectClickOutside";
 import { StyledProgressBar, StyledUploadModal } from "./styles";
-
-const ConfirmUploadScreen: React.FC<{
-  checked: boolean;
-  toggleChecked: () => void;
-  nextScreen: () => void;
-  uploadFiles: () => void;
-  finishedUpload: boolean;
-}> = ({ checked, toggleChecked, nextScreen, uploadFiles, finishedUpload }) => {
-  const upload = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    nextScreen();
-    if (!finishedUpload) uploadFiles();
-  };
-
-  return (
-    <>
-      <div className="modal-title">Please confirm</div>
-      <div className="modal-entry">
-        You only uploaded photos and videos that you own the copyright to and
-        that you have created yourself.
-      </div>
-      <div className="modal-entry">
-        Any depicted people or owners of depicted property gave you the
-        permission to publish the photos and videos.
-      </div>
-      <div id="button-footer">
-        <label id="agree-check" htmlFor="agree-checkbox">
-          <input
-            id="agree-checkbox"
-            type="checkbox"
-            checked={checked}
-            onChange={() => toggleChecked()}
-          />
-          <span className={`checkbox-label${checked ? " checked" : ""}`}>
-            <AiOutlineCheck size={24} color="white"></AiOutlineCheck>
-          </span>
-          <span className="text-label">I understand and agree</span>
-        </label>
-        <button
-          type="button"
-          className="confirm-button"
-          disabled={!checked}
-          onClick={(e) => upload(e)}>
-          Submit Content
-        </button>
-      </div>
-    </>
-  );
-};
-
-const UploadingScreen: React.FC<{
-  progressPercentage: number;
-  finishedUpload: boolean;
-}> = ({ progressPercentage, finishedUpload }) => {
-  return (
-    <>
-      <div className="modal-title">Uploading</div>
-      <div className="modal-entry">
-        {!finishedUpload
-          ? "Please wait while your files are being uploaded.."
-          : "Your files have been uploaded."}
-      </div>
-      <div className="upload-progress">
-        {!finishedUpload ? (
-          <StyledProgressBar progressPercentage={progressPercentage} />
-        ) : (
-          <Link to="../profile" className="confirm-button">
-            Go to Gallery <AiOutlineArrowRight color="white" size={24} />
-          </Link>
-        )}
-      </div>
-    </>
-  );
-};
 
 type UploadModalProps = {
   closeModal: () => void;
@@ -146,7 +73,7 @@ export const UploadModal: React.FC<UploadModalProps> = ({
       };
 
       document.body.style.overflow = "hidden";
-      let unsubscribe = detectClickOutside(popupElement, handleClickOutside);
+      const unsubscribe = detectClickOutside(popupElement, handleClickOutside);
       return () => {
         document.body.style.overflow = "auto";
         unsubscribe();
@@ -167,5 +94,81 @@ export const UploadModal: React.FC<UploadModalProps> = ({
         <div id="popup-content">{renderedScreen}</div>
       </div>
     </StyledUploadModal>
+  );
+};
+
+const ConfirmUploadScreen: React.FC<{
+  checked: boolean;
+  toggleChecked: () => void;
+  nextScreen: () => void;
+  uploadFiles: () => void;
+  finishedUpload: boolean;
+}> = ({ checked, toggleChecked, nextScreen, uploadFiles, finishedUpload }) => {
+  const upload = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    nextScreen();
+    if (!finishedUpload) uploadFiles();
+  };
+
+  return (
+    <>
+      <div className="modal-title">Please confirm</div>
+      <div className="modal-entry">
+        You only uploaded photos and videos that you own the copyright to and
+        that you have created yourself.
+      </div>
+      <div className="modal-entry">
+        Any depicted people or owners of depicted property gave you the
+        permission to publish the photos and videos.
+      </div>
+      <div id="button-footer">
+        <label id="agree-check" htmlFor="agree-checkbox">
+          <input
+            id="agree-checkbox"
+            type="checkbox"
+            checked={checked}
+            onChange={() => toggleChecked()}
+          />
+          <span className={`checkbox-label${checked ? " checked" : ""}`}>
+            <AiOutlineCheck size={24} color="white"></AiOutlineCheck>
+          </span>
+          <span className="text-label">I understand and agree</span>
+        </label>
+        <button
+          type="button"
+          className="confirm-button"
+          disabled={!checked}
+          onClick={(e) => upload(e)}>
+          Submit Content
+        </button>
+      </div>
+    </>
+  );
+};
+
+const UploadingScreen: React.FC<{
+  progressPercentage: number;
+  finishedUpload: boolean;
+}> = ({ progressPercentage, finishedUpload }) => {
+  const { user } = useAuth();
+
+  return (
+    <>
+      <div className="modal-title">Uploading</div>
+      <div className="modal-entry">
+        {!finishedUpload
+          ? "Please wait while your files are being uploaded.."
+          : "Your files have been uploaded."}
+      </div>
+      <div className="upload-progress">
+        {!finishedUpload ? (
+          <StyledProgressBar progressPercentage={progressPercentage} />
+        ) : (
+          <Link to={"../profile/" + user?.uid} className="confirm-button">
+            Go to Gallery <AiOutlineArrowRight color="white" size={24} />
+          </Link>
+        )}
+      </div>
+    </>
   );
 };

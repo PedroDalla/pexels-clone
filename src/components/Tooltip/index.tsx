@@ -29,7 +29,7 @@ interface TooltipProps extends React.ComponentPropsWithoutRef<"div"> {
  * A simple and customizable tooltip component
  * @param activateIf - Accepts a condition or a boolean that will determine whether or not the component is rendered
  */
-export const Tooltip = forwardRef<any, TooltipProps>(
+export const Tooltip = forwardRef<unknown, TooltipProps>(
   (
     {
       children,
@@ -59,14 +59,16 @@ export const Tooltip = forwardRef<any, TooltipProps>(
       ],
     });
 
-    let timeout = useRef<NodeJS.Timeout>();
+    const timeout = useRef<NodeJS.Timeout>();
 
     const show = () => {
       if (timeout.current) clearTimeout(timeout.current);
       setVisible(true);
-      detectClickOutside(tooltipRefElement, () => {
-        setVisible(false);
-      });
+      if (tooltipRefElement.current) {
+        detectClickOutside(tooltipRefElement, () => {
+          setVisible(false);
+        });
+      }
     };
 
     const hide = () => {
@@ -97,7 +99,7 @@ export const Tooltip = forwardRef<any, TooltipProps>(
         arrowOptions={arrowOptions}>
         <div
           className="tooltip-trigger"
-          ref={(ref) => setReferenceElement(ref)}
+          ref={(newRef) => setReferenceElement(newRef)}
           {...(activateOn === "hover"
             ? { onMouseEnter: show, onMouseLeave: hide }
             : { onClick: toggle })}>
@@ -106,10 +108,9 @@ export const Tooltip = forwardRef<any, TooltipProps>(
         {visible && activateIf && (
           <div
             id="tooltip-main"
-            ref={(ref) => setPopperElement(ref)}
+            ref={(newRef) => setPopperElement(newRef)}
             style={styles.popper}
             {...attributes.popper}
-            tabIndex={0}
             {...(activateOn === "hover" && {
               onMouseEnter: show,
               onMouseLeave: hide,
@@ -117,7 +118,7 @@ export const Tooltip = forwardRef<any, TooltipProps>(
             {tooltipContent}
             <div
               id="tooltip-arrow"
-              ref={(ref) => setArrowElement(ref)}
+              ref={(newRef) => setArrowElement(newRef)}
               style={styles.arrow}></div>
           </div>
         )}

@@ -37,11 +37,11 @@ export function Home() {
     }
 
     //Fetches the images and sets an event listener for changes
-    let unsubscribeArr: Unsubscribe[] = [];
-    for (let v in lastImageBatch) {
+    const unsubscribeArr: Unsubscribe[] = [];
+    for (const v in lastImageBatch) {
       unsubscribeArr.push(
         listenForImage(lastImageBatch[v].uid, (imageSnapshot) => {
-          let image = imageSnapshot.val();
+          const image = imageSnapshot;
           setImages((prevImages) => {
             const index = prevImages.findIndex(
               (img) => img && img.uid === lastImageBatch[v].uid
