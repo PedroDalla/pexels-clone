@@ -1,6 +1,9 @@
 import styled from "styled-components";
 
-export const StyledNav = styled.nav<{ transparentBackground?: boolean }>`
+export const StyledNav = styled.nav<{
+  transparentBackground?: boolean;
+  position?: "fixed" | "static";
+}>`
   width: 100%;
   padding: 0 1.25rem;
   color: ${({ transparentBackground }) =>
@@ -8,7 +11,7 @@ export const StyledNav = styled.nav<{ transparentBackground?: boolean }>`
   top: 0;
   left: 0;
   right: 0;
-  position: fixed;
+  position: ${({ position }) => (position ? position : "fixed")};
   font-family: "Poppins", Arial, Helvetica, sans-serif;
   z-index: 10;
   user-select: none;

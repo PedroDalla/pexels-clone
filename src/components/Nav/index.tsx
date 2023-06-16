@@ -9,16 +9,20 @@ import { useAuth } from "../../contexts/AuthContext";
 interface NavProps {
   searchBarEnabled?: boolean;
   transparentBackground?: boolean;
+  position?: "fixed" | "static";
 }
 
 export const Nav = ({
   searchBarEnabled,
   transparentBackground,
+  position,
 }: NavProps): JSX.Element => {
   const auth = useAuth();
 
   return (
-    <StyledNav transparentBackground={transparentBackground}>
+    <StyledNav
+      transparentBackground={transparentBackground}
+      position={position}>
       <div id="nav-content">
         <Logo mode="text" />
         {searchBarEnabled ? <SearchBar navSearchBar></SearchBar> : null}

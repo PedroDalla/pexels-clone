@@ -7,6 +7,7 @@ import { Upload } from "./pages/Upload";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthContextProvider } from "./contexts/AuthContext";
+import { NotFound } from "./pages/NotFound";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/profile/:uid" element={<Profile />} />
           <Route path="/upload" element={<Upload />}></Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthContextProvider>
     </BrowserRouter>

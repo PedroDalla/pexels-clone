@@ -9,6 +9,7 @@ import { fetchUser } from "../../services/firebase";
 import { Navigator } from "../../components/Navigator";
 import { Gallery } from "./components/Gallery";
 import { StyledProfile } from "./styles";
+import { Footer } from "../Footer";
 
 interface ProfileNavigator {
   galleryCount: number;
@@ -147,6 +148,7 @@ export const Profile: React.FC = () => {
           </Navigator>
         </div>
         {renderedScreen}
+        <Footer />
       </StyledProfile>
     </>
   );
