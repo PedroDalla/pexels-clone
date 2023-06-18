@@ -6,9 +6,8 @@ import React, {
   useMemo,
 } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { IoCloseOutline, IoPersonCircle } from "react-icons/io5";
-import { detectClickOutside } from "../../utils/detectClickOutside";
-import { StyledContentVisualizer, StyledDownloadOptions } from "./styles";
+import { IoPersonCircle } from "react-icons/io5";
+import { StyledPhotoView, StyledDownloadOptions } from "./styles";
 import {
   AiFillCheckCircle,
   AiOutlineHeart,
@@ -24,17 +23,12 @@ import { useAuth } from "../../contexts/AuthContext";
 import { Tooltip } from "../Tooltip";
 import { downloadURL } from "../../utils/downloadURI";
 
-interface ContentVisualizerProps {
+interface PhotoViewProps {
   content: IPhoto;
-  hideVisualizer: () => void;
 }
 
-export const ContentVisualizer: React.FC<ContentVisualizerProps> = ({
-  content,
-  hideVisualizer,
-}) => {
+export const PhotoView: React.FC<PhotoViewProps> = ({ content }) => {
   const [zoomed, setZoomed] = useState(false);
-  const popupElement = useRef(null);
   const [photographer, setPhotographer] = useState<IUser>();
   const [imageLoaded, setImageLoaded] = useState(false);
   const { user } = useAuth();
@@ -59,24 +53,6 @@ export const ContentVisualizer: React.FC<ContentVisualizerProps> = ({
       setImageLike(content.uid, user.uid, !liked);
     }
   };
-  const closeVisualizer = () => {
-    if (zoomed) {
-      setZoomed(false);
-    }
-    hideVisualizer();
-  };
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    const unsubscribe = detectClickOutside(popupElement, () => {
-      closeVisualizer();
-    });
-    return () => {
-      document.body.style.overflow = "auto";
-      unsubscribe();
-    };
-  }, []);
-
   //Image zooming functionality
   const onMouseMove = useCallback(
     (event: MouseEvent, image: EventTarget & HTMLElement) => {
@@ -141,149 +117,142 @@ export const ContentVisualizer: React.FC<ContentVisualizerProps> = ({
   };
 
   return (
-    <StyledContentVisualizer>
-      <div id="outer-controls">
-        <button id="close-popup-btn" onClick={() => closeVisualizer()}>
-          <IoCloseOutline size={36}></IoCloseOutline>
-        </button>
-      </div>
-      <div id="popup" ref={popupElement}>
-        <div id="popup-header">
-          <div id="author-info" className="hide-mobile">
-            <div id="author-image">
-              {photographer && photographer.photoURL ? (
-                <Link to={`/profile:${photographer.uid}`}>
-                  <img
-                    alt="user"
-                    src={photographer.photoURL}
-                    referrerPolicy="no-referrer"></img>
-                </Link>
-              ) : photographer ? (
-                <Link to={`/profile:${photographer.uid}`}>
-                  <IoPersonCircle size="54px" />
-                </Link>
-              ) : (
-                <IoPersonCircle size="54px" />
-              )}
-            </div>
-            <div id="author-details">
-              <div id="author-title">
-                {photographer && (
-                  <Link to={`/profile:${photographer.uid}`}>
-                    {photographer.displayName}
-                  </Link>
-                )}
-              </div>
-              <div id="follow-container">
-                <button id="follow-btn">Follow</button>
-              </div>
-            </div>
-          </div>
-          <div className="header-buttons hide-mobile">
-            <button className="collect-btn">
-              <BiBookmarks size={22} />
-              Collect
-            </button>
-            <button
-              onClick={(e) => handleLike(e)}
-              className={`like-btn${liked ? " liked" : ""}`}>
-              <FiHeart size={22} />
-              Like <span id="like-count">{content.likes}</span>
-            </button>
-            <button
-              className="download-btn"
-              onClick={() => {
-                downloadURL(content.medium, "Pexels Image.png");
-              }}>
-              Free download
-            </button>
-            <Tooltip
-              tooltipContent={<DownloadOptions imageInfo={content} />}
-              activateOn="click"
-              arrowOptions={{ top: -2 }}>
-              <button className="download-options-btn">
-                <IoIosArrowDown></IoIosArrowDown>
-              </button>
-            </Tooltip>
-          </div>
-          <div className="header-buttons show-mobile">
-            <button className="collect-btn">
-              <BiBookmarks size={22} />
-            </button>
-            <button className="like-btn">
-              <AiOutlineHeart size={22} />
-            </button>
-          </div>
-          <div className="header-buttons show-mobile">
-            <button className="download-btn">Free download</button>
-            <button className="download-options-btn">
-              <IoIosArrowDown></IoIosArrowDown>
-            </button>
-          </div>
-        </div>
-        <div id="popup-content">
-          <div
-            id="image-container"
-            role="button"
-            onMouseDown={(e) => handleZoom(e)}
-            tabIndex={-1}
-            className={imageLoaded ? "show" : "hide"}>
-            <img
-              alt=""
-              src={content.blur}
-              className={imageLoaded ? "hide" : "show"}
-            />
-            <img
-              src={content.original}
-              alt=""
-              className={imageLoaded ? "show" : "hide"}
-              onLoad={() => setImageLoaded(true)}></img>
-          </div>
-        </div>
-        <div id="image-footer">
-          <span id="free-use-btn">
-            <AiFillCheckCircle size={18}></AiFillCheckCircle>Free to use
-          </span>
-          <div id="image-footer-controls">
-            <button id="more-info-btn">
-              <BsFillInfoCircleFill size={18}></BsFillInfoCircleFill>
-              <span>More info</span>
-            </button>
-            <button id="share-btn">
-              <FiShare2 size={18}></FiShare2>
-              <span>Share</span>
-            </button>
-          </div>
-        </div>
-        <div id="author-panel">
-          <div id="author-info-mobile">
-            <div id="author-image-mobile">
-              {photographer && photographer.photoURL ? (
+    <StyledPhotoView>
+      <div id="photo-header">
+        <div id="author-info" className="hide-mobile">
+          <div id="author-image">
+            {photographer && photographer.photoURL ? (
+              <Link to={`/profile:${photographer.uid}`}>
                 <img
                   alt="user"
                   src={photographer.photoURL}
                   referrerPolicy="no-referrer"></img>
-              ) : (
-                <IoPersonCircle size="40px" />
-              )}
-            </div>
-            <div id="author-title-mobile">
+              </Link>
+            ) : photographer ? (
+              <Link to={`/profile:${photographer.uid}`}>
+                <IoPersonCircle size="54px" />
+              </Link>
+            ) : (
+              <IoPersonCircle size="54px" />
+            )}
+          </div>
+          <div id="author-details">
+            <div id="author-title">
               {photographer && (
                 <Link to={`/profile:${photographer.uid}`}>
                   {photographer.displayName}
                 </Link>
               )}
             </div>
-          </div>
-          <div id="author-mobile-controls">
-            <button id="follow-mobile-btn">
-              <AiOutlineUserAdd size={20}></AiOutlineUserAdd>
-            </button>
-            <button id="donate-mobile-btn">Donate</button>
+            <div id="follow-container">
+              <button id="follow-btn">Follow</button>
+            </div>
           </div>
         </div>
+        <div className="header-buttons hide-mobile">
+          <button className="collect-btn">
+            <BiBookmarks size={22} />
+            Collect
+          </button>
+          <button
+            onClick={(e) => handleLike(e)}
+            className={`like-btn${liked ? " liked" : ""}`}>
+            <FiHeart size={22} />
+            Like <span id="like-count">{content.likes}</span>
+          </button>
+          <button
+            className="download-btn"
+            onClick={() => {
+              downloadURL(content.medium, "Pexels Image.png");
+            }}>
+            Free download
+          </button>
+          <Tooltip
+            tooltipContent={<DownloadOptions imageInfo={content} />}
+            activateOn="click"
+            arrowOptions={{ top: -2 }}>
+            <button className="download-options-btn">
+              <IoIosArrowDown></IoIosArrowDown>
+            </button>
+          </Tooltip>
+        </div>
+        <div className="header-buttons show-mobile">
+          <button className="collect-btn">
+            <BiBookmarks size={22} />
+          </button>
+          <button className="like-btn">
+            <AiOutlineHeart size={22} />
+          </button>
+        </div>
+        <div className="header-buttons show-mobile">
+          <button className="download-btn">Free download</button>
+          <button className="download-options-btn">
+            <IoIosArrowDown></IoIosArrowDown>
+          </button>
+        </div>
       </div>
-    </StyledContentVisualizer>
+      <div id="photo-content">
+        <div
+          id="image-container"
+          role="button"
+          onMouseDown={(e) => handleZoom(e)}
+          tabIndex={-1}
+          className={imageLoaded ? "show" : "hide"}>
+          <img
+            alt=""
+            src={content.blur}
+            className={imageLoaded ? "hide" : "show"}
+          />
+          <img
+            src={content.original}
+            alt=""
+            className={imageLoaded ? "show" : "hide"}
+            onLoad={() => setImageLoaded(true)}></img>
+        </div>
+      </div>
+      <div id="image-footer">
+        <span id="free-use-btn">
+          <AiFillCheckCircle size={18}></AiFillCheckCircle>Free to use
+        </span>
+        <div id="image-footer-controls">
+          <button id="more-info-btn">
+            <BsFillInfoCircleFill size={18}></BsFillInfoCircleFill>
+            <span>More info</span>
+          </button>
+          <button id="share-btn">
+            <FiShare2 size={18}></FiShare2>
+            <span>Share</span>
+          </button>
+        </div>
+      </div>
+      <div id="author-panel">
+        <div id="author-info-mobile">
+          <div id="author-image-mobile">
+            {photographer && photographer.photoURL ? (
+              <img
+                alt="user"
+                src={photographer.photoURL}
+                referrerPolicy="no-referrer"></img>
+            ) : (
+              <IoPersonCircle size="40px" />
+            )}
+          </div>
+          <div id="author-title-mobile">
+            {photographer && (
+              <Link to={`/profile:${photographer.uid}`}>
+                {photographer.displayName}
+              </Link>
+            )}
+          </div>
+        </div>
+        <div id="author-mobile-controls">
+          <button id="follow-mobile-btn">
+            <AiOutlineUserAdd size={20}></AiOutlineUserAdd>
+          </button>
+          <button id="donate-mobile-btn">Donate</button>
+        </div>
+      </div>
+    </StyledPhotoView>
   );
 };
 

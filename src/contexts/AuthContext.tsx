@@ -33,24 +33,20 @@ export interface AuthContext {
 
 const AuthContext = createContext<AuthContext>({} as AuthContext);
 
-const baseUserObject: {
-  gallery: { uid: string }[];
-  collections: { uid: string }[];
-  followers: string[];
-  following: string[];
-  views: 0;
-  likes: { [key: string]: boolean };
-  totalFollowers: 0;
-  totalFollowing: 0;
-} = {
-  gallery: [],
-  collections: [],
+const baseUserObject: IUser = {
+  displayName: "",
+  email: "",
   followers: [],
   following: [],
-  views: 0,
-  likes: {},
+  photoURL: "",
   totalFollowers: 0,
   totalFollowing: 0,
+  uid: "",
+  views: 0,
+  collections: {},
+  gallery: {},
+  likes: {},
+  phoneNumber: "",
 };
 
 export const AuthContextProvider: React.FC = ({ children }) => {
@@ -73,12 +69,14 @@ export const AuthContextProvider: React.FC = ({ children }) => {
           displayName = name;
         }
       }
-      const newUserObject = {
-        displayName,
-        email,
-        phoneNumber,
-        photoURL,
-        uid,
+      const newUserObject: IUser = {
+        ...{
+          displayName,
+          email,
+          phoneNumber,
+          photoURL,
+          uid,
+        },
         ...baseUserObject,
       };
       await set(reference, newUserObject);

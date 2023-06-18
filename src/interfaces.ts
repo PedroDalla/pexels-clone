@@ -16,28 +16,50 @@ export interface IGalleryResult {
   [index: string]: IPhoto;
 }
 
+export interface IUserGalleryResult {
+  [index: string]: { uid: string };
+}
+
+export interface IUserCollectionResult {
+  [index: string]: { uid: string };
+}
+
+export interface ICollection {
+  uid: string;
+  title: string;
+  description?: string;
+  content?: { [index: string]: { uid: string } };
+  contentCount: number;
+  authorUID: string;
+}
+
+export interface ICollectionResult {
+  [index: string]: ICollection;
+}
+
 export interface IUser {
   displayName: string | null;
   email: string | null;
   phoneNumber?: string | null;
   uid: string;
   photoURL: string | null;
-  gallery?: { uid: string }[];
-  collections?: { uid: string }[];
+  gallery?: IUserGalleryResult;
+  collections?: IUserCollectionResult;
   followers: string[];
   following: string[];
   views: number;
   likes?: { [key: string]: boolean };
   totalFollowers: number;
   totalFollowing: number;
-}
-
-export interface ICollection {
-  id: number;
-  title: string;
-  content: string[];
-  count: number;
-  author: string;
+  paypalEmail?: string;
+  bio?: string;
+  location?: string;
+  website?: string;
+  twitter?: string;
+  instagram?: string;
+  youtube?: string;
+  tiktok?: string;
+  allowMessages?: boolean;
 }
 
 export interface IStageFile {

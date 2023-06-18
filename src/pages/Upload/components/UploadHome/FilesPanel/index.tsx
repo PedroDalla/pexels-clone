@@ -8,6 +8,7 @@ import { uploadImage } from "../../../../../services/firebase";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { IStageFile } from "../../../../../interfaces";
 import { StyledFilesPanel } from "./styles";
+import { Modal } from "../../../../../components/Modal";
 
 type FilesPanelProps = {
   files: IStageFile[];
@@ -28,6 +29,7 @@ export const FilesPanel: React.FC<FilesPanelProps> = ({
   const [showModal, setShowModal] = useState(false);
   const [progress, setProgress] = useState<number[]>([]);
   const [completed, setCompleted] = useState(false);
+  const [allowModalToClose, setAllowModalToClose] = useState(true);
 
   const auth = useAuth();
 
@@ -49,6 +51,10 @@ export const FilesPanel: React.FC<FilesPanelProps> = ({
         window.scrollTo({ top: window.scrollY + y - 100, behavior: "smooth" });
       }
     }
+  };
+
+  const passLetAllowModalToClose = (val: boolean) => {
+    setAllowModalToClose(val);
   };
 
   const uploadFiles = () => {
@@ -108,11 +114,16 @@ export const FilesPanel: React.FC<FilesPanelProps> = ({
         completed={completed}></UploadBar>
       {showModal &&
         createPortal(
-          <UploadModal
-            closeModal={hideModal}
-            progress={progress}
-            uploadFiles={uploadFiles}
-          />,
+          <Modal
+            closeOnClickOutside={allowModalToClose}
+            closePopup={hideModal}
+            showCloseButton={allowModalToClose}>
+            <UploadModal
+              progress={progress}
+              uploadFiles={uploadFiles}
+              passLetAllowModalToClose={passLetAllowModalToClose}
+            />
+          </Modal>,
           document.body
         )}
     </StyledFilesPanel>

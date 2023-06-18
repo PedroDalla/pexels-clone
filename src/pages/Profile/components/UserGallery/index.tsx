@@ -1,11 +1,11 @@
 import { Unsubscribe } from "firebase/database";
 import { useEffect, useState } from "react";
-import { ContentExplorer } from "../../../../components/ContentExplorer";
+import { Gallery } from "../../../../components/Gallery";
 import { IPhoto, IUser } from "../../../../interfaces";
 import { listenForImage } from "../../../../services/firebase";
-import { StyledGallery } from "./styles";
+import { StyledUserGallery } from "./styles";
 
-export const Gallery: React.FC<{ user?: IUser }> = ({ user }) => {
+export const UserGallery: React.FC<{ user?: IUser }> = ({ user }) => {
   const [images, setImages] = useState<IPhoto[]>([]);
 
   useEffect(() => {
@@ -37,14 +37,14 @@ export const Gallery: React.FC<{ user?: IUser }> = ({ user }) => {
   }, [user]);
 
   return (
-    <StyledGallery>
+    <StyledUserGallery>
       {images.length ? (
-        <ContentExplorer images={images} />
+        <Gallery images={images} />
       ) : (
         <div id="empty-message">
           It looks like there are no images here yet 😢
         </div>
       )}
-    </StyledGallery>
+    </StyledUserGallery>
   );
 };

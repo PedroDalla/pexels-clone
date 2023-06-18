@@ -7,9 +7,10 @@ import { useAuth } from "../../contexts/AuthContext";
 import { IUser } from "../../interfaces";
 import { fetchUser } from "../../services/firebase";
 import { Navigator } from "../../components/Navigator";
-import { Gallery } from "./components/Gallery";
+import { UserGallery } from "./components/UserGallery";
 import { StyledProfile } from "./styles";
 import { Footer } from "../Footer";
+import { Collections } from "./components/Collections";
 
 interface ProfileNavigator {
   galleryCount: number;
@@ -65,10 +66,10 @@ export const Profile: React.FC = () => {
   let renderedScreen;
   switch (page) {
     case "Gallery":
-      renderedScreen = <Gallery user={profileInfo} />;
+      renderedScreen = <UserGallery user={profileInfo} />;
       break;
     case "Collections":
-      renderedScreen = <></>;
+      renderedScreen = <Collections user={profileInfo} />;
       break;
   }
 
@@ -125,13 +126,12 @@ export const Profile: React.FC = () => {
                 <span className="counter">{navigatorInfo.galleryCount}</span>
               </span>
             </li>
-            <li>
+            <li className={page === "Collections" ? "selected" : ""}>
               <span
                 onClick={() => setPage("Collections")}
                 onKeyDown={() => setPage("Collections")}
                 role="link"
-                tabIndex={-2}
-                className={page === "Collections" ? "selected" : ""}>
+                tabIndex={-1}>
                 Collections{" "}
                 <span className="counter">{navigatorInfo.collectionCount}</span>
               </span>
@@ -148,8 +148,8 @@ export const Profile: React.FC = () => {
           </Navigator>
         </div>
         {renderedScreen}
-        <Footer />
       </StyledProfile>
+      <Footer />
     </>
   );
 };

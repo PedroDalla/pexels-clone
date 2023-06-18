@@ -1,23 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineArrowRight, AiOutlineCheck } from "react-icons/ai";
-import { IoCloseOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../../../../contexts/AuthContext";
-import { detectClickOutside } from "../../../../../../utils/detectClickOutside";
 import { StyledProgressBar, StyledUploadModal } from "./styles";
 
 type UploadModalProps = {
-  closeModal: () => void;
   progress: number[];
   uploadFiles: () => void;
+  passLetAllowModalToClose: (value: boolean) => void;
 };
 
 export const UploadModal: React.FC<UploadModalProps> = ({
-  closeModal,
   progress,
   uploadFiles,
+  passLetAllowModalToClose,
 }) => {
-  const popupElement = useRef(null);
   const [checked, setChecked] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [finishedUpload, setFinishedUpload] = useState(false);
@@ -43,6 +40,16 @@ export const UploadModal: React.FC<UploadModalProps> = ({
     setCurrentStep(1);
   };
 
+  useEffect(() => {
+    switch (currentStep) {
+      case 0:
+        passLetAllowModalToClose(true);
+        break;
+      case 1:
+        passLetAllowModalToClose(false);
+    }
+  }, [currentStep]);
+
   let renderedScreen;
   switch (currentStep) {
     case 0:
@@ -66,33 +73,9 @@ export const UploadModal: React.FC<UploadModalProps> = ({
       break;
   }
 
-  useEffect(() => {
-    if (currentStep === 0) {
-      const handleClickOutside = () => {
-        closeModal();
-      };
-
-      document.body.style.overflow = "hidden";
-      const unsubscribe = detectClickOutside(popupElement, handleClickOutside);
-      return () => {
-        document.body.style.overflow = "auto";
-        unsubscribe();
-      };
-    }
-  }, [currentStep]);
-
   return (
     <StyledUploadModal>
-      <div id="popup" ref={popupElement}>
-        <div id="outer-controls">
-          {currentStep === 0 ? (
-            <button id="close-popup-btn" onClick={() => closeModal()}>
-              <IoCloseOutline size={36}></IoCloseOutline>
-            </button>
-          ) : null}
-        </div>
-        <div id="popup-content">{renderedScreen}</div>
-      </div>
+      <div id="upload-screen">{renderedScreen}</div>
     </StyledUploadModal>
   );
 };

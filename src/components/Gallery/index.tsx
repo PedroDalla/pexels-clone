@@ -1,19 +1,17 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { StyledContentExplorer } from "./styles";
+import { StyledGallery } from "./styles";
 import { Image } from "../Image/index";
 import { IPhoto } from "../../interfaces";
-import { ContentVisualizer } from "../ContentVisualizer";
+import { PhotoView } from "../PhotoView";
 import { createPortal } from "react-dom";
+import { Modal } from "../Modal";
 
-type ContentExplorerProps = {
+type GalleryProps = {
   images: IPhoto[];
   onScroll?: () => void;
 };
 
-export const ContentExplorer: React.FC<ContentExplorerProps> = ({
-  images,
-  onScroll,
-}) => {
+export const Gallery: React.FC<GalleryProps> = ({ images, onScroll }) => {
   const element = useRef<HTMLDivElement>(null);
 
   const [columnCount, setColumnCount] = useState(2);
@@ -40,7 +38,7 @@ export const ContentExplorer: React.FC<ContentExplorerProps> = ({
     return cols;
   }, [images, columnCount]);
 
-  function hideContentVisualizer() {
+  function hidePhotoView() {
     setIndex(null);
   }
 
@@ -89,7 +87,7 @@ export const ContentExplorer: React.FC<ContentExplorerProps> = ({
   }, [onScroll]);
 
   return (
-    <StyledContentExplorer>
+    <StyledGallery>
       <div id="explorer-main" ref={element}>
         {columns.map((column, index) => (
           <div key={index} className="explorer-column">
@@ -99,13 +97,15 @@ export const ContentExplorer: React.FC<ContentExplorerProps> = ({
       </div>
       {index != null
         ? createPortal(
-            <ContentVisualizer
-              content={images[index]}
-              hideVisualizer={hideContentVisualizer}
-            />,
+            <Modal
+              closeOnClickOutside
+              showCloseButton
+              closePopup={hidePhotoView}>
+              <PhotoView content={images[index]} />
+            </Modal>,
             document.body
           )
         : null}
-    </StyledContentExplorer>
+    </StyledGallery>
   );
 };

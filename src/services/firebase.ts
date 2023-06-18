@@ -26,6 +26,8 @@ import {
   IUploadFile,
   IGalleryResult,
   IPhoto,
+  IUserCollectionResult,
+  ICollection,
 } from "../interfaces";
 import { v4 as uuid } from "uuid";
 
@@ -49,8 +51,8 @@ export { auth, db, storage };
 
 const storageRef = strRef(storage);
 
-export async function fetchUser(user_uid: string) {
-  const reference = ref(db, `users/${user_uid}`);
+export async function fetchUser(userUID: string) {
+  const reference = ref(db, `users/${userUID}`);
   try {
     const result = await get(reference);
     const parsed = result.val();
@@ -66,12 +68,123 @@ export async function fetchUser(user_uid: string) {
 }
 
 export function listenForUser(
-  user_uid: string,
+  userUID: string,
   onUpdate: (val: DataSnapshot) => void
 ) {
-  const reference = ref(db, `users/${user_uid}`);
+  const reference = ref(db, `users/${userUID}`);
 
   return onValue(reference, (val) => onUpdate(val));
+}
+
+export async function fetchUserCollections(userUID: string) {
+  const reference = ref(db, `users/${userUID}/collections`);
+  try {
+    const result = await get(reference);
+    const parsed: IUserCollectionResult = result.val();
+    if (parsed) {
+      return parsed;
+    } else {
+      throw new Error("No user collections were found!");
+    }
+  } catch (err: unknown) {
+    console.error(err);
+    throw new Error("Error when fetching user");
+  }
+}
+
+export async function addImageToCollection(
+  collectionUID: string,
+  imageUID: string
+) {
+  const reference = ref(db, `collections/${collectionUID}`);
+
+  try {
+    const collection = await get(reference);
+    const parsedCollection: ICollection = collection.val();
+    //Verifies if the collection exists
+    if (parsedCollection) {
+      //Checking for the same image already in the collection to avoid duplicates
+      if (
+        !parsedCollection.content ||
+        (parsedCollection.content &&
+          !Object.values(parsedCollection.content).find(
+            (val) => val.uid === imageUID
+          ))
+      ) {
+        try {
+          const contentRef = ref(db, `collections/${collectionUID}/content`);
+          const newUID = push(contentRef).key;
+          if (newUID) {
+            await set(reference, {
+              ...parsedCollection,
+              ...{
+                contentCount: parsedCollection.contentCount + 1,
+                content: {
+                  ...parsedCollection.content,
+                  ...{ [newUID]: { uid: imageUID } },
+                },
+              },
+            });
+          }
+        } catch (err) {
+          console.error(err);
+          throw new Error("Error writing collection data!");
+        }
+      }
+    } else {
+      throw new Error("The collection provided does not exist!");
+    }
+  } catch (err) {
+    console.error(err);
+    throw new Error("Error fetching collection data!");
+  }
+}
+
+export async function fetchCollection(collectionUID: string) {
+  const reference = ref(db, `collections/${collectionUID}`);
+  try {
+    const result = await get(reference);
+    const parsed = result.val();
+    if (parsed) {
+      return parsed;
+    } else {
+      throw new Error("No collection was found!");
+    }
+  } catch (err: unknown) {
+    console.error(err);
+    throw new Error("Error!");
+  }
+}
+
+export async function createNewCollection(userUID: string, title: string) {
+  const reference = push(ref(db, `collections`));
+  const uid = reference.key;
+  if (uid) {
+    const newCollection: ICollection = {
+      authorUID: userUID,
+      content: {},
+      contentCount: 0,
+      title: title,
+      uid: uid,
+    };
+    try {
+      await set(reference, newCollection);
+
+      try {
+        const userReference = ref(db, `users/${userUID}/collections`);
+        const userCollection = { uid: uid };
+        await push(userReference, userCollection);
+      } catch (err) {
+        console.error(err);
+        throw new Error("Error assigning collection to user in the database!");
+      }
+    } catch (err: unknown) {
+      console.error(err);
+      throw new Error("Error writing new collection to the database!");
+    }
+  } else {
+    throw new Error("Error writing new collection to the database!");
+  }
 }
 
 export async function fetchImagesPaginated(
@@ -113,8 +226,8 @@ export async function fetchImagesPaginated(
   }
 }
 
-export async function fetchUserGallery(user_uid: string) {
-  const reference = ref(db, `users/${user_uid}/gallery`);
+export async function fetchUserGallery(userUID: string) {
+  const reference = ref(db, `users/${userUID}/gallery`);
   try {
     const result = await get(reference);
     const parsed = result.val();
@@ -143,11 +256,11 @@ export function listenForImage(
 
 export async function setImageLike(
   img_uid: string,
-  user_uid: string,
+  userUID: string,
   like: boolean
 ) {
   const imageReference = ref(db, `gallery/${img_uid}/likes`);
-  const userLikeReference = ref(db, `users/${user_uid}/likes/${img_uid}`);
+  const userLikeReference = ref(db, `users/${userUID}/likes/${img_uid}`);
   try {
     const img = await get(imageReference);
     const parsedImg = img.val();

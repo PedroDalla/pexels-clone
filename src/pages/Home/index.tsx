@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Nav } from "../../components/Nav";
 import { Hero } from "../../components/Hero";
 import { Navigator } from "../../components/Navigator";
-import { ContentExplorer } from "../../components/ContentExplorer";
+import { Gallery } from "../../components/Gallery";
 import { fetchImagesPaginated, listenForImage } from "../../services/firebase";
 import { IPhoto } from "../../interfaces";
 import { Unsubscribe } from "firebase/database";
@@ -102,7 +102,7 @@ export function Home() {
       <div id="explorer-header">
         <span>Free Stock Photos</span>
       </div>
-      <ContentExplorer images={images} onScroll={() => handleScroll()} />
+      <Gallery images={images} onScroll={() => handleScroll()} />
     </StyledHome>
   );
 }
