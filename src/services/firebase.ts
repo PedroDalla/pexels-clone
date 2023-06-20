@@ -17,6 +17,7 @@ import {
   push,
   query,
   ref,
+  remove,
   set,
   startAt,
 } from "firebase/database";
@@ -89,6 +90,59 @@ export async function fetchUserCollections(userUID: string) {
   } catch (err: unknown) {
     console.error(err);
     throw new Error("Error when fetching user");
+  }
+}
+
+export async function deleteCollection(collectionUID: string) {
+  const reference = ref(db, `collections/${collectionUID}`);
+  try {
+    remove(reference);
+  } catch (err) {
+    console.error(err);
+    throw new Error("Error deleting collection!");
+  }
+}
+
+export async function removeImageFromCollection(
+  collectionUID: string,
+  imageUID: string
+) {
+  const reference = ref(db, `collections/${collectionUID}`);
+  try {
+    const collection = await get(reference);
+    const parsedCollection: ICollection = collection.val();
+    if (parsedCollection && parsedCollection.content) {
+      const imageKeys = Object.keys(parsedCollection.content);
+      let imageKey: string | undefined = undefined;
+      for (const key of imageKeys) {
+        if (parsedCollection.content[key].uid === imageUID) imageKey = key;
+      }
+
+      if (imageKey) {
+        const imageReference = ref(
+          db,
+          `collections/${collectionUID}/content/${imageKey}`
+        );
+
+        const countReference = ref(
+          db,
+          `collections/${collectionUID}/contentCount`
+        );
+
+        try {
+          remove(imageReference);
+          set(countReference, parsedCollection.contentCount - 1);
+        } catch (err) {
+          console.error(err);
+          throw new Error("Error removing image from collection!");
+        }
+      }
+    } else {
+      throw new Error("No content in collection!");
+    }
+  } catch (err) {
+    console.error(err);
+    throw new Error("Error fetching collection!");
   }
 }
 
@@ -243,10 +297,10 @@ export async function fetchUserGallery(userUID: string) {
 }
 
 export function listenForImage(
-  img_uid: string,
+  imageUID: string,
   onUpdate: (val: IPhoto) => void
 ) {
-  const reference = ref(db, `gallery/${img_uid}`);
+  const reference = ref(db, `gallery/${imageUID}`);
 
   return onValue(reference, (snapshot: DataSnapshot) => {
     const value: IPhoto = snapshot.val();
@@ -254,13 +308,25 @@ export function listenForImage(
   });
 }
 
+export function listenForCollection(
+  collectionUID: string,
+  onUpdate: (val: ICollection) => void
+) {
+  const reference = ref(db, `collections/${collectionUID}`);
+
+  return onValue(reference, (snapshot: DataSnapshot) => {
+    const value: ICollection = snapshot.val();
+    onUpdate(value);
+  });
+}
+
 export async function setImageLike(
-  img_uid: string,
+  imageUID: string,
   userUID: string,
   like: boolean
 ) {
-  const imageReference = ref(db, `gallery/${img_uid}/likes`);
-  const userLikeReference = ref(db, `users/${userUID}/likes/${img_uid}`);
+  const imageReference = ref(db, `gallery/${imageUID}/likes`);
+  const userLikeReference = ref(db, `users/${userUID}/likes/${imageUID}`);
   try {
     const img = await get(imageReference);
     const parsedImg = img.val();

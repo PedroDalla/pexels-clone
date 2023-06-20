@@ -22,6 +22,9 @@ import { listenForUser, setImageLike } from "../../services/firebase";
 import { useAuth } from "../../contexts/AuthContext";
 import { Tooltip } from "../Tooltip";
 import { downloadURL } from "../../utils/downloadURI";
+import { createPortal } from "react-dom";
+import { Modal } from "../Modal";
+import { CollectionsModal } from "../CollectionsModal";
 
 interface PhotoViewProps {
   content: IPhoto;
@@ -31,6 +34,7 @@ export const PhotoView: React.FC<PhotoViewProps> = ({ content }) => {
   const [zoomed, setZoomed] = useState(false);
   const [photographer, setPhotographer] = useState<IUser>();
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [collectionsModalEnabled, setCollectionsModalEnabled] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -116,6 +120,14 @@ export const PhotoView: React.FC<PhotoViewProps> = ({ content }) => {
     }
   };
 
+  const showCollectionsModal = () => {
+    setCollectionsModalEnabled(true);
+  };
+
+  const hideCollectionsModal = () => {
+    setCollectionsModalEnabled(false);
+  };
+
   return (
     <StyledPhotoView>
       <div id="photo-header">
@@ -150,10 +162,19 @@ export const PhotoView: React.FC<PhotoViewProps> = ({ content }) => {
           </div>
         </div>
         <div className="header-buttons hide-mobile">
-          <button className="collect-btn">
+          <button
+            className="collect-btn"
+            onClick={() => showCollectionsModal()}>
             <BiBookmarks size={22} />
             Collect
           </button>
+          {collectionsModalEnabled &&
+            createPortal(
+              <Modal closePopup={hideCollectionsModal} closeOnClickOutside>
+                <CollectionsModal imageUID={content.uid} />
+              </Modal>,
+              document.body
+            )}
           <button
             onClick={(e) => handleLike(e)}
             className={`like-btn${liked ? " liked" : ""}`}>
@@ -199,15 +220,15 @@ export const PhotoView: React.FC<PhotoViewProps> = ({ content }) => {
           tabIndex={-1}
           className={imageLoaded ? "show" : "hide"}>
           <img
-            alt=""
-            src={content.blur}
-            className={imageLoaded ? "hide" : "show"}
-          />
-          <img
             src={content.original}
             alt=""
             className={imageLoaded ? "show" : "hide"}
             onLoad={() => setImageLoaded(true)}></img>
+          <img
+            alt=""
+            src={content.blur}
+            className={imageLoaded ? "hide" : "show"}
+          />
         </div>
       </div>
       <div id="image-footer">

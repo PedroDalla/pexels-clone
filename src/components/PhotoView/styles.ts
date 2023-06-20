@@ -98,6 +98,8 @@ export const StyledPhotoView = styled.div`
     padding: 10px;
     white-space: nowrap;
     background: white;
+    flex-wrap: wrap;
+    row-gap: 20px;
 
     @media (max-width: 920px) {
       position: sticky;
@@ -194,6 +196,8 @@ export const StyledPhotoView = styled.div`
       }
 
       &.hide-mobile {
+        justify-content: flex-end;
+        flex-grow: 1;
         @media (max-width: 920px) {
           display: none;
         }
