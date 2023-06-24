@@ -12,7 +12,7 @@ export const StyledNav = styled.nav<{
   left: 0;
   right: 0;
   position: ${({ position }) => (position ? position : "fixed")};
-  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  font-family: "Plus Jakarta Sans", Arial, Helvetica, sans-serif;
   z-index: 10;
   user-select: none;
 
@@ -40,7 +40,7 @@ export const StyledNav = styled.nav<{
     }
 
     > ul {
-      font-family: "Poppins";
+      font-family: "Plus Jakarta Sans";
       display: flex;
       list-style: none;
       margin: 0;

@@ -122,7 +122,7 @@ export const StyledFileOutliner = styled.div`
 `;
 export const StyledTooltip = styled.div`
   font-size: 16px;
-  font-family: "Poppins";
+  font-family: "Plus Jakarta Sans";
   padding: 15px;
   background: #d3405c;
   border-radius: 10px;

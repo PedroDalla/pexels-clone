@@ -20,6 +20,7 @@ import {
   remove,
   set,
   startAt,
+  update,
 } from "firebase/database";
 import {
   IUser,
@@ -100,6 +101,23 @@ export async function deleteCollection(collectionUID: string) {
   } catch (err) {
     console.error(err);
     throw new Error("Error deleting collection!");
+  }
+}
+
+export async function updateCollection(
+  collectionUID: string,
+  title: string,
+  description?: string
+) {
+  const reference = ref(db, `collections/${collectionUID}`);
+  const updates: { [index: string]: string } = {};
+  updates["title"] = title;
+  updates["description"] = description || "";
+  try {
+    update(reference, updates);
+  } catch (err) {
+    console.error(err);
+    throw new Error("Error updating collection!");
   }
 }
 
@@ -310,14 +328,22 @@ export function listenForImage(
 
 export function listenForCollection(
   collectionUID: string,
-  onUpdate: (val: ICollection) => void
+  onUpdate: (val: ICollection) => void,
+  onError?: (err: unknown) => void
 ) {
   const reference = ref(db, `collections/${collectionUID}`);
-
-  return onValue(reference, (snapshot: DataSnapshot) => {
-    const value: ICollection = snapshot.val();
-    onUpdate(value);
-  });
+  return onValue(
+    reference,
+    (snapshot: DataSnapshot) => {
+      const value: ICollection = snapshot.val();
+      if (value) {
+        onUpdate(value);
+      } else {
+        onError && onError("404");
+      }
+    },
+    (err) => onError && onError(err)
+  );
 }
 
 export async function setImageLike(

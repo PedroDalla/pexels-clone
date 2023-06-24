@@ -41,7 +41,7 @@ export const StyledUploadBar = styled.div<{ percentageReady: number }>`
         );
     }
     .content-tracker-text {
-      font-family: "Poppins";
+      font-family: "Plus Jakarta Sans";
 
       .content-tracker-title {
         font-size: 18px;

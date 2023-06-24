@@ -29,7 +29,7 @@ export const StyledCollectionThumbnail = styled.div<{ imageCount: number }>`
           case 2:
             return "1fr";
           case 3:
-            return "1fr 1fr";
+            return "50% 50%";
         }
       }};
       grid-template-columns: ${({ imageCount }) => {
@@ -42,6 +42,12 @@ export const StyledCollectionThumbnail = styled.div<{ imageCount: number }>`
             return "1fr 1fr";
         }
       }};
+
+      .empty-collection {
+        width: 100%;
+        height: 100%;
+        background: #d4d4d4;
+      }
 
       > div {
         &:first-child {

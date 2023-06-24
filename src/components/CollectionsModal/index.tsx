@@ -1,5 +1,6 @@
 import { Unsubscribe } from "firebase/database";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   AiFillCheckCircle,
   AiOutlineCloseCircle,
@@ -8,14 +9,16 @@ import {
 import { IoImageOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
-import { ICollection, IPhoto } from "../../interfaces";
+import { ICollection, IPhoto, IUser } from "../../interfaces";
 import {
   addImageToCollection,
+  createNewCollection,
   listenForCollection,
   listenForImage,
   removeImageFromCollection,
 } from "../../services/firebase";
-import { StyledCollectionsModal } from "./styles";
+import { Modal } from "../Modal";
+import { StyledCollectionsModal, StyledNewCollectionModal } from "./styles";
 
 type CollectionsModalProps = {
   imageUID: string;
@@ -24,8 +27,13 @@ type CollectionsModalProps = {
 export const CollectionsModal: React.FC<CollectionsModalProps> = ({
   imageUID,
 }) => {
+  const [showAddCollectionModal, setShowAddCollectionModal] = useState(false);
   const { user } = useAuth();
   if (!user) return null;
+
+  const hideModal = () => {
+    setShowAddCollectionModal(false);
+  };
 
   return (
     <StyledCollectionsModal>
@@ -34,6 +42,16 @@ export const CollectionsModal: React.FC<CollectionsModalProps> = ({
         <Link to={`/profile/${user.uid}/collections`}>All collections</Link>
       </div>
       <div id="collection-grid">
+        <div className="user-collection" id="add-new-collection">
+          <div className="uc-image-container">
+            <div className="uc-overlay">
+              <button onClick={() => setShowAddCollectionModal(true)}>
+                <AiOutlinePlusCircle size={44} />
+              </button>
+            </div>
+          </div>
+          <div className="uc-title">Add New Collection</div>
+        </div>
         {user.collections &&
           Object.values(user.collections).map((collection, index) => (
             <UserCollection
@@ -43,6 +61,13 @@ export const CollectionsModal: React.FC<CollectionsModalProps> = ({
             />
           ))}
       </div>
+      {showAddCollectionModal &&
+        createPortal(
+          <Modal closeOnClickOutside showCloseButton closePopup={hideModal}>
+            <AddCollectionModal user={user} closeModal={hideModal} />
+          </Modal>,
+          document.body
+        )}
     </StyledCollectionsModal>
   );
 };
@@ -111,8 +136,8 @@ const UserCollection: React.FC<{
         {collection.content && thumbnailImage ? (
           <img src={thumbnailImage.small} alt="" />
         ) : (
-          <div>
-            <IoImageOutline></IoImageOutline>
+          <div className="empty-collection-image">
+            <IoImageOutline size={44} />
           </div>
         )}
         {collection.content &&
@@ -141,5 +166,45 @@ const UserCollection: React.FC<{
       </div>
       <div className="uc-title">{collection.title}</div>
     </div>
+  );
+};
+
+const AddCollectionModal: React.FC<{
+  user: IUser;
+  closeModal: () => void;
+}> = ({ user, closeModal }) => {
+  const [title, setTitle] = useState("");
+
+  const createCol = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await createNewCollection(user.uid, title);
+    closeModal();
+  };
+
+  return (
+    <StyledNewCollectionModal>
+      <div id="modal-title">Delete Collection</div>
+      <form id="edit-collection-form" onSubmit={(e) => createCol(e)}>
+        <label id="field-title">
+          Title
+          <input
+            type="text"
+            value={title}
+            required
+            maxLength={30}
+            onChange={(titleValue) =>
+              setTitle(titleValue.target.value)
+            }></input>
+        </label>
+        <div id="buttons-container">
+          <button type="button" id="close-button" onClick={() => closeModal()}>
+            Back
+          </button>
+          <button type="submit" id="update-button">
+            Create Collection
+          </button>
+        </div>
+      </form>
+    </StyledNewCollectionModal>
   );
 };

@@ -28,7 +28,7 @@ export const StyledAuthForm = styled.div`
   }
 
   #form-header {
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
     margin-top: 10px;
 
     #title {

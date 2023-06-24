@@ -22,7 +22,7 @@ export const StyledProfile = styled.div`
     > #profile-name {
       margin: 15px 0;
       font-size: 52px;
-      font-family: "Poppins";
+      font-family: "Plus Jakarta Sans";
       font-weight: 500;
       color: #2c343e;
     }
@@ -33,7 +33,7 @@ export const StyledProfile = styled.div`
     justify-content: center;
     background: #05a081;
     color: #fff;
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
     text-decoration: none;
     font-size: 16px;
     border: 0;
@@ -55,7 +55,7 @@ export const StyledProfile = styled.div`
   }
 
   #statistics-section {
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -125,7 +125,7 @@ export const StyledProfile = styled.div`
   }
 
   #empty-message {
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
     font-size: 40px;
     font-weight: 500;
     padding: 3rem;

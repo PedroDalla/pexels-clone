@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const StyledFooter = styled.footer`
-  font-family: "Poppins";
+  font-family: "Plus Jakarta Sans";
   font-size: 20px;
 
   color: #fff;
@@ -60,7 +60,7 @@ export const StyledFooter = styled.footer`
             outline: none;
 
             font-size: 16px;
-            font-family: "Poppins";
+            font-family: "Plus Jakarta Sans";
             font-weight: 500;
 
             cursor: pointer;

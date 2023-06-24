@@ -23,7 +23,7 @@ export const StyledLogo = styled.div<{ size: number }>`
   > span {
     margin-left: 1rem;
     font-size: 22px;
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
     font-weight: 400;
     display: flex;
     align-items: center;

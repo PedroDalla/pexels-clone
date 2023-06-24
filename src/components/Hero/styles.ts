@@ -54,7 +54,7 @@ export const StyledHero = styled.header`
       margin-bottom: 1rem;
       color: #dbdbdb;
       font-size: 15px;
-      font-family: "Poppins", sans-serif;
+      font-family: "Plus Jakarta Sans", sans-serif;
       text-decoration: none;
       opacity: 0.7;
       transition: opacity 0.2s ease-in;
@@ -70,7 +70,7 @@ export const StyledHero = styled.header`
   }
 
   #hero-content {
-    font-family: "Poppins", "Roboto", sans-serif;
+    font-family: "Plus Jakarta Sans", "Roboto", sans-serif;
     color: white;
 
     display: flex;

@@ -105,7 +105,10 @@ export const Image: FC<ImageProps> = ({ imageInfo, setIndex }) => {
       </StyledImage>
       {collectionsModalEnabled &&
         createPortal(
-          <Modal closeOnClickOutside closePopup={() => hideCollectionsModal()}>
+          <Modal
+            closeOnClickOutside
+            showCloseButton
+            closePopup={() => hideCollectionsModal()}>
             <CollectionsModal imageUID={imageInfo.uid} />
           </Modal>,
           document.body

@@ -5,7 +5,7 @@ export const StyledNotFound = styled.div`
   height: 100%;
 
   #not-found-content {
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
     padding: 3rem 1rem;
     display: flex;
     justify-content: center;

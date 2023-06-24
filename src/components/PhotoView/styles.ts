@@ -19,7 +19,7 @@ export const StyledPhotoView = styled.div`
   }
 
   button {
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
     font-weight: 500;
     font-size: 16px;
     color: #000;
@@ -132,7 +132,7 @@ export const StyledPhotoView = styled.div`
       }
 
       #author-details {
-        font-family: "Poppins";
+        font-family: "Plus Jakarta Sans";
         margin: 0 15px;
         overflow: hidden;
 
@@ -290,7 +290,7 @@ export const StyledPhotoView = styled.div`
   #image-footer {
     display: flex;
     justify-content: space-between;
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
 
     #free-use-btn {
       color: #7f7f7f;
@@ -369,7 +369,7 @@ export const StyledPhotoView = styled.div`
 
       #author-title-mobile {
         transition: 0.1s ease-in;
-        font-family: "Poppins";
+        font-family: "Plus Jakarta Sans";
         margin-left: 15px;
         display: flex;
         align-items: center;
@@ -414,7 +414,7 @@ export const StyledPhotoView = styled.div`
 `;
 
 export const StyledDownloadOptions = styled.div`
-  font-family: "Poppins";
+  font-family: "Plus Jakarta Sans";
   background: white;
   border: 1px solid #dfdfe0;
   border-radius: 6px;

@@ -35,7 +35,7 @@ export const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
       grid-gap: 30px;
     }
 
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
 
     h3 {
       font-size: 33px;
@@ -49,7 +49,7 @@ export const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
     button {
       padding: 10px 30px;
 
-      font-family: "Poppins";
+      font-family: "Plus Jakarta Sans";
       font-size: 16px;
       font-weight: 600;
 
@@ -91,7 +91,7 @@ export const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
       align-items: flex-start;
 
       .image-form {
-        font-family: "Poppins";
+        font-family: "Plus Jakarta Sans";
         width: 100%;
 
         .form-field {
@@ -121,7 +121,7 @@ export const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
             padding: 14px;
             border-radius: 6px;
 
-            font-family: "Poppins";
+            font-family: "Plus Jakarta Sans";
 
             &::placeholder {
               color: #bfbfbf;
@@ -137,7 +137,7 @@ export const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
       justify-content: center;
       align-items: flex-start;
 
-      font-family: "Poppins";
+      font-family: "Plus Jakarta Sans";
       color: #d3405c;
 
       @media (max-width: 900px) {

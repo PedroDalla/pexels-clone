@@ -13,7 +13,7 @@ export const StyledUploadModal = styled.div`
   padding: 30px;
 
   #upload-screen {
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
     font-weight: 400;
     font-size: 16px;
     color: #7f7f7f;

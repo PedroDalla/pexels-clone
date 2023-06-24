@@ -170,7 +170,10 @@ export const PhotoView: React.FC<PhotoViewProps> = ({ content }) => {
           </button>
           {collectionsModalEnabled &&
             createPortal(
-              <Modal closePopup={hideCollectionsModal} closeOnClickOutside>
+              <Modal
+                showCloseButton
+                closePopup={hideCollectionsModal}
+                closeOnClickOutside>
                 <CollectionsModal imageUID={content.uid} />
               </Modal>,
               document.body

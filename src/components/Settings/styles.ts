@@ -39,7 +39,7 @@ export const StyledTooltipContent = styled.div`
         outline: none;
         text-align: left;
 
-        font-family: "Poppins";
+        font-family: "Plus Jakarta Sans";
         font-weight: 500;
         line-height: 1.4;
         color: #5e5e5e;

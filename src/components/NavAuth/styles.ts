@@ -7,7 +7,7 @@ export const StyledNavAuth = styled.nav<{
   width: 100%;
   padding: 0 1.25rem;
   color: white;
-  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  font-family: "Plus Jakarta Sans", Arial, Helvetica, sans-serif;
   min-height: 66px;
   display: flex;
   align-items: center;

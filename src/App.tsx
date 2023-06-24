@@ -8,6 +8,7 @@ import { Upload } from "./pages/Upload";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthContextProvider } from "./contexts/AuthContext";
 import { NotFound } from "./pages/NotFound";
+import { Collection } from "./pages/Collection";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/join" element={<Join />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile/:uid" element={<Profile />} />
+          <Route path="/collection/:uid" element={<Collection />} />
           <Route path="/upload" element={<Upload />}></Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

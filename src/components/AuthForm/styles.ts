@@ -9,7 +9,7 @@ export const StyledAuthForm = styled.form`
   .divider {
     margin: 1.5rem 0 1.5rem 0;
     font-weight: 300;
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
     color: #757575;
   }
 

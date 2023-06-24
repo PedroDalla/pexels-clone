@@ -45,7 +45,7 @@ const StyledJoin = styled.div`
       padding: 0.5rem;
 
       #form-header {
-        font-family: "Poppins";
+        font-family: "Plus Jakarta Sans";
         margin: 2rem 0;
 
         #title {

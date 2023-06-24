@@ -99,10 +99,10 @@ export function Home() {
           <li className="disabled">Discover</li>
         </Navigator>
       </StyledNavigatorWrapper>
-      <div id="explorer-header">
-        <span>Free Stock Photos</span>
+      <div id="gallery-container">
+        <div id="gallery-title">Free Stock Photos</div>
+        <Gallery images={images} onScroll={() => handleScroll()} />
       </div>
-      <Gallery images={images} onScroll={() => handleScroll()} />
     </StyledHome>
   );
 }

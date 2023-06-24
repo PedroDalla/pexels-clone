@@ -24,7 +24,7 @@ export const StyledUploadHome = styled.div`
     }
 
     > h1 {
-      font-family: "Poppins";
+      font-family: "Plus Jakarta Sans";
       font-size: 32px;
       color: #2c343e;
       font-weight: 500;
@@ -39,7 +39,7 @@ export const StyledUploadHome = styled.div`
       justify-content: center;
       background: #05a081;
       color: #fff;
-      font-family: "Poppins";
+      font-family: "Plus Jakarta Sans";
       text-decoration: none;
       font-size: 16px;
       border: 0;
@@ -60,7 +60,7 @@ export const StyledUploadHome = styled.div`
 
   #upload-details {
     padding: 10px 50px;
-    font-family: "Poppins";
+    font-family: "Plus Jakarta Sans";
     font-size: 15px;
     font-weight: 500;
     color: #2c343e;

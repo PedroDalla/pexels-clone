@@ -4,17 +4,17 @@ export const StyledHome = styled.div`
   width: 100%;
   height: 100%;
 
-  #explorer-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
-    padding: 30px;
-    > span {
+  #gallery-container {
+    max-width: fit-content;
+    margin: 1rem auto;
+    padding: 0 30px;
+
+    > #gallery-title {
       font-size: 24px;
-      font-weight: 500;
-      font-family: "Poppins";
+      font-weight: 600;
+      font-family: "Plus Jakarta Sans";
       color: #2c343e;
-      margin: 0 auto;
+      margin-bottom: 2rem;
     }
   }
 `;
