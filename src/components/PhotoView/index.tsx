@@ -8,11 +8,7 @@ import React, {
 import { IoIosArrowDown } from "react-icons/io";
 import { IoPersonCircle } from "react-icons/io5";
 import { StyledPhotoView, StyledDownloadOptions } from "./styles";
-import {
-  AiFillCheckCircle,
-  AiOutlineHeart,
-  AiOutlineUserAdd,
-} from "react-icons/ai";
+import { AiFillCheckCircle, AiOutlineUserAdd } from "react-icons/ai";
 import { BiBookmarks } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { BsFillInfoCircleFill } from "react-icons/bs";
