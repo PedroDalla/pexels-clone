@@ -93,7 +93,6 @@ export const StyledCollectionsModal = styled.div`
             fill: white;
             background-color: transparent;
             border: 0;
-            outline: 0;
             width: 100%;
             height: 100%;
             cursor: pointer;
@@ -181,7 +180,6 @@ export const StyledNewCollectionModal = styled.div`
         color: #4a4a4a;
         border: none;
         border-radius: 6px;
-        outline: none;
         border: 1px solid #dfdfe0;
       }
     }
@@ -205,7 +203,6 @@ export const StyledNewCollectionModal = styled.div`
       letter-spacing: 0.3px;
       border: 1px solid #7f7f7f;
       border-radius: 6px;
-      outline: none;
       color: #2c343e;
       background: white;
       padding: 15px 30px;

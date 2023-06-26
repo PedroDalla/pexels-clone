@@ -36,7 +36,6 @@ export const StyledTooltipContent = styled.div`
         width: 100%;
         padding: 10px 0 10px 14px;
         border: none;
-        outline: none;
         text-align: left;
 
         font-family: "Plus Jakarta Sans";

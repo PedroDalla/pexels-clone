@@ -42,7 +42,9 @@ export const Modal: React.FC<ModalProps> = ({
           </button>
         )}
       </div>
-      <div id="popup-content">{children}</div>
+      <div id="popup-content" role="dialog" aria-modal>
+        {children}
+      </div>
     </StyledModal>
   );
 };

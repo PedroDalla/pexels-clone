@@ -43,7 +43,6 @@ export const StyledUploadHome = styled.div`
       text-decoration: none;
       font-size: 16px;
       border: 0;
-      outline: 0;
       border-radius: 6px;
       padding: 0.8rem 1.7rem;
       transition: 0.2s ease;

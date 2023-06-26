@@ -78,7 +78,6 @@ export const StyledUploadBar = styled.div<{ percentageReady: number }>`
     color: #fff;
     font-size: 18px;
     border: 0;
-    outline: 0;
     border-radius: 6px;
     padding: 0.9rem 1.4rem;
     transition: 0.2s ease;

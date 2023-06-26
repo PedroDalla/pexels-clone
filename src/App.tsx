@@ -19,7 +19,17 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/join" element={<Join />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/profile/:uid" element={<Profile />} />
+          <Route path="/profile/:uid">
+            <Route path="/profile/:uid" element={<Profile page="Gallery" />} />
+            <Route
+              path="/profile/:uid/gallery"
+              element={<Profile page="Gallery" />}
+            />
+            <Route
+              path="/profile/:uid/collections"
+              element={<Profile page="Collections" />}
+            />
+          </Route>
           <Route path="/collection/:uid" element={<Collection />} />
           <Route path="/upload" element={<Upload />}></Route>
           <Route path="*" element={<NotFound />} />

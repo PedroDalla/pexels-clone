@@ -9,7 +9,7 @@ import { fetchUser } from "../../services/firebase";
 import { Navigator } from "../../components/Navigator";
 import { UserGallery } from "./components/UserGallery";
 import { StyledProfile } from "./styles";
-import { Footer } from "../Footer";
+import { Footer } from "../../components/Footer";
 import { Collections } from "./components/Collections";
 
 interface ProfileNavigator {
@@ -19,12 +19,13 @@ interface ProfileNavigator {
   followingCount: number;
 }
 
-export const Profile: React.FC = () => {
+export const Profile: React.FC<{ page: "Gallery" | "Collections" }> = ({
+  page,
+}) => {
   const { user } = useAuth();
   const { uid } = useParams();
 
   const [profileInfo, setProfileInfo] = useState<IUser>();
-  const [page, setPage] = useState<"Gallery" | "Collections">("Gallery");
 
   const [navigatorInfo, setNavigatorInfo] = useState<ProfileNavigator>({
     galleryCount: 0,
@@ -73,6 +74,7 @@ export const Profile: React.FC = () => {
       break;
   }
 
+  if (!profileInfo) return null;
   return (
     <>
       <Nav searchBarEnabled={true} transparentBackground={false}></Nav>
@@ -117,24 +119,17 @@ export const Profile: React.FC = () => {
         <div id="navigator-container">
           <Navigator>
             <li className={page === "Gallery" ? "selected" : ""}>
-              <span
-                role="link"
-                tabIndex={-1}
-                onClick={() => setPage("Gallery")}
-                onKeyDown={() => setPage("Gallery")}>
+              <Link to={`/profile/${profileInfo.uid}/gallery`}>
                 Gallery{" "}
                 <span className="counter">{navigatorInfo.galleryCount}</span>
-              </span>
+              </Link>
             </li>
             <li className={page === "Collections" ? "selected" : ""}>
-              <span
-                onClick={() => setPage("Collections")}
-                onKeyDown={() => setPage("Collections")}
-                role="link"
-                tabIndex={-1}>
-                Collections{" "}
+              <Link to={`/profile/${profileInfo.uid}/collections`}>
+                {" "}
+                Collections
                 <span className="counter">{navigatorInfo.collectionCount}</span>
-              </span>
+              </Link>
             </li>
             <li>Statistics</li>
             <li>

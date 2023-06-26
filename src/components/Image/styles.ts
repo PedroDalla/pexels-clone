@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const StyledImage = styled.div`
   position: relative;
   width: 100%;
-
+  outline-offset: 4px;
   cursor: pointer;
 
   border-radius: 6px;
@@ -71,7 +71,6 @@ export const StyledImage = styled.div`
       button {
         color: black;
         background: white;
-        outline: none;
         border: 0;
         border-radius: 10px;
         display: flex;

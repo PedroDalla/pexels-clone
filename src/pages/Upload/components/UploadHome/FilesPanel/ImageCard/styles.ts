@@ -54,7 +54,6 @@ export const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
       font-weight: 600;
 
       border-radius: 6px;
-      outline: none;
       border: 0;
       cursor: pointer;
     }
@@ -111,7 +110,6 @@ export const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
 
           input {
             border: none;
-            outline: none;
 
             width: 100%;
 
@@ -179,7 +177,6 @@ export const StyledImageCard = styled.div<{ error: boolean; hide: boolean }>`
     button {
       width: 65px;
       height: 65px;
-      outline: none;
       border: 0;
       border-radius: 50%;
       background: #f7f7f7;

@@ -6,7 +6,6 @@ export const StyledUploadModal = styled.div`
   width: 100%;
   max-height: 100vh;
   margin: auto;
-  outline: none;
 
   border-radius: 10px;
   background: #fff;
@@ -105,7 +104,6 @@ export const StyledUploadModal = styled.div`
     color: #fff;
     font-size: 16px;
     border: 0;
-    outline: 0;
     border-radius: 6px;
     padding: 0.9rem 1.4rem;
     transition: 0.2s ease;

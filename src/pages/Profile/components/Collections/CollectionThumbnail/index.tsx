@@ -1,7 +1,7 @@
 import { Unsubscribe } from "firebase/database";
 import { useEffect, useState } from "react";
 import { BiImages } from "react-icons/bi";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ICollection, IPhoto } from "../../../../../interfaces";
 import {
   fetchCollection,
@@ -14,7 +14,6 @@ export const CollectionThumbnail: React.FC<{ collectionUID: string }> = ({
 }) => {
   const [collection, setCollection] = useState<ICollection>();
   const [thumbnailImgs, setThumbnailImgs] = useState<IPhoto[]>([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCollection(collectionUID).then((collection: ICollection) =>
@@ -56,10 +55,10 @@ export const CollectionThumbnail: React.FC<{ collectionUID: string }> = ({
 
   if (!collection) return null;
   return (
-    <StyledCollectionThumbnail
-      imageCount={thumbnailImgs.length}
-      onClick={() => navigate(`/collection/${collectionUID}`)}>
-      <div className="collection-thumbnail">
+    <StyledCollectionThumbnail imageCount={thumbnailImgs.length}>
+      <Link
+        to={`/collection/${collectionUID}`}
+        className="collection-thumbnail">
         <div className="collection-images-container">
           {thumbnailImgs.length > 0 ? (
             thumbnailImgs.map((tImg, index) => (
@@ -71,7 +70,7 @@ export const CollectionThumbnail: React.FC<{ collectionUID: string }> = ({
             <div className="empty-collection"></div>
           )}
         </div>
-      </div>
+      </Link>
       <div className="ct-text">
         <div className="ct-title">{collection.title}</div>
         <div className="ct-count">

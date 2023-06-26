@@ -65,7 +65,6 @@ export const StyledNav = styled.nav<{
 
         #notifications-btn {
           background: transparent;
-          outline: none;
           border: none;
           display: flex;
           justify-content: center;
@@ -84,7 +83,6 @@ export const StyledNav = styled.nav<{
             transparentBackground ? "black" : "#fff"};
           font-size: 18px;
           border: 0;
-          outline: 0;
           border-radius: 6px;
           padding: 0.8rem 1.3rem;
           margin-right: -3.5rem;
@@ -100,7 +98,6 @@ export const StyledNav = styled.nav<{
         #collapse-menu-btn {
           background-color: transparent;
           border: 0;
-          outline: none;
         }
       }
 

@@ -201,18 +201,33 @@ export const PhotoView: React.FC<PhotoViewProps> = ({ content }) => {
           </Tooltip>
         </div>
         <div className="header-buttons show-mobile">
-          <button className="collect-btn">
+          <button
+            className="collect-btn"
+            onClick={() => showCollectionsModal()}>
             <BiBookmarks size={22} />
           </button>
-          <button className="like-btn">
-            <AiOutlineHeart size={22} />
+          <button
+            onClick={(e) => handleLike(e)}
+            className={`like-btn${liked ? " liked" : ""}`}>
+            <FiHeart size={22} />
           </button>
         </div>
         <div className="header-buttons show-mobile">
-          <button className="download-btn">Free download</button>
-          <button className="download-options-btn">
-            <IoIosArrowDown></IoIosArrowDown>
+          <button
+            className="download-btn"
+            onClick={() => {
+              downloadURL(content.medium, "Pexels Image.png");
+            }}>
+            Free download
           </button>
+          <Tooltip
+            tooltipContent={<DownloadOptions imageInfo={content} />}
+            activateOn="click"
+            arrowOptions={{ top: -2 }}>
+            <button className="download-options-btn">
+              <IoIosArrowDown></IoIosArrowDown>
+            </button>
+          </Tooltip>
         </div>
       </div>
       <div id="photo-content">

@@ -21,7 +21,6 @@ export const StyledModal = styled.div`
 
     #close-popup-btn {
       background: transparent;
-      outline: none;
       cursor: pointer;
       border: none;
       padding: 0;

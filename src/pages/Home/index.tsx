@@ -8,6 +8,7 @@ import { fetchImagesPaginated, listenForImage } from "../../services/firebase";
 import { IPhoto } from "../../interfaces";
 import { Unsubscribe } from "firebase/database";
 import { StyledHome, StyledNavigatorWrapper } from "./styles";
+import { Link } from "react-router-dom";
 
 export function Home() {
   const [showNavSearchBar, setShowNavSearchBar] = useState(false);
@@ -95,7 +96,9 @@ export function Home() {
       <Hero></Hero>
       <StyledNavigatorWrapper>
         <Navigator>
-          <li className="selected">Home</li>
+          <li className="selected">
+            <Link to="/">Home</Link>
+          </li>
           <li className="disabled">Discover</li>
         </Navigator>
       </StyledNavigatorWrapper>

@@ -8,6 +8,7 @@ export const StyledCollectionThumbnail = styled.div<{ imageCount: number }>`
     filter: brightness(0.5);
   }
   .collection-thumbnail {
+    display: block;
     border-radius: 15px;
     overflow: hidden;
     width: 100%;

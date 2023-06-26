@@ -7,6 +7,8 @@ export const StyledNavigator = styled.div`
     display: flex;
     flex-direction: row;
     padding: 0;
+    max-width: 100%;
+    overflow: overlay;
 
     li {
       margin: 0 4px;
@@ -15,17 +17,22 @@ export const StyledNavigator = styled.div`
       cursor: pointer;
       padding: 12px 20px;
       font-weight: 500;
-      color: #4a4a4a;
       border: 1px solid transparent;
       border-radius: 30px;
+      height: 45px;
 
-      &.selected {
-        color: #fff;
-        background-color: black;
+      white-space: nowrap;
 
-        &:hover {
-          color: #fff;
-          background-color: #2c343e;
+      a,
+      span {
+        text-decoration: none;
+        color: #4a4a4a;
+      }
+
+      &:hover {
+        a,
+        span {
+          color: black;
         }
       }
 
@@ -33,8 +40,18 @@ export const StyledNavigator = styled.div`
         cursor: not-allowed;
       }
 
-      &:hover {
-        color: black;
+      &.selected {
+        a,
+        span {
+          color: #fff;
+        }
+
+        background-color: black;
+
+        &:hover {
+          background-color: #2c343e;
+          color: #fff;
+        }
       }
     }
   }

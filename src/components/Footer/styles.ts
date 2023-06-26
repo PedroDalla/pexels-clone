@@ -57,8 +57,6 @@ export const StyledFooter = styled.footer`
             justify-content: center;
             align-items: center;
 
-            outline: none;
-
             font-size: 16px;
             font-family: "Plus Jakarta Sans";
             font-weight: 500;
@@ -79,7 +77,6 @@ export const StyledFooter = styled.footer`
         display: flex;
         align-items: center;
         button {
-          outline: none;
           border: none;
           margin-right: 5px;
           background: transparent;

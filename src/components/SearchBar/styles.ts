@@ -25,7 +25,6 @@ export const StyledSearchBar = styled.div<{
     input {
       min-width: 0;
       border: none;
-      outline: none;
       padding: ${({ navSearchBar }) =>
         navSearchBar ? ".9rem 1.2rem" : "1rem"};
       font-family: "Roboto", sans-serif;
@@ -43,7 +42,6 @@ export const StyledSearchBar = styled.div<{
 
     button {
       background-color: transparent;
-      outline: none;
       border: 0;
       display: flex;
       justify-content: center;

@@ -87,7 +87,6 @@ export const StyledFileOutliner = styled.div`
         padding: 0;
 
         border-radius: 6px;
-        outline: none;
         border: none;
 
         cursor: pointer;

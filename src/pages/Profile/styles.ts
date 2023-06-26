@@ -8,6 +8,7 @@ export const StyledProfile = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 
   #title-section {
     display: flex;
@@ -37,7 +38,6 @@ export const StyledProfile = styled.div`
     text-decoration: none;
     font-size: 16px;
     border: 0;
-    outline: 0;
     border-radius: 6px;
     padding: 0.8rem 1.3rem;
     transition: 0.2s ease;
@@ -118,7 +118,7 @@ export const StyledProfile = styled.div`
     width: 100%;
 
     .counter {
-      padding-left: 2px;
+      margin-left: 5px;
       color: #7f7f7f;
       font-size: 14px;
     }

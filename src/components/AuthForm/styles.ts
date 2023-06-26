@@ -38,7 +38,6 @@ export const StyledAuthForm = styled.form`
     margin-top: 0;
     margin-bottom: 0;
     color: #1a1a1a;
-    outline: none;
 
     margin-bottom: 1rem;
 

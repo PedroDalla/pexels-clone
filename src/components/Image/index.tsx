@@ -54,6 +54,7 @@ export const Image: FC<ImageProps> = ({ imageInfo, setIndex }) => {
   return (
     <>
       <StyledImage
+        tabIndex={0}
         onClick={() => {
           setIndex();
         }}>
@@ -63,6 +64,7 @@ export const Image: FC<ImageProps> = ({ imageInfo, setIndex }) => {
         <div id="photo-controls">
           <div id="controls-header" className="control-buttons">
             <button
+              tabIndex={-1}
               onClick={(e) => {
                 e.stopPropagation();
                 showCollectionsModal();
@@ -70,6 +72,7 @@ export const Image: FC<ImageProps> = ({ imageInfo, setIndex }) => {
               <FiBookmark size="18px"></FiBookmark>
             </button>
             <button
+              tabIndex={-1}
               onClick={(e) => handleLike(e)}
               className={`like-btn${liked ? " liked" : ""}`}>
               <FiHeart size="18px"></FiHeart>
@@ -93,6 +96,7 @@ export const Image: FC<ImageProps> = ({ imageInfo, setIndex }) => {
             </span>
             <div className="control-buttons">
               <button
+                tabIndex={-1}
                 onClick={(e) => {
                   e.stopPropagation();
                   downloadURL(imageInfo.medium, "Pexels Image.png");

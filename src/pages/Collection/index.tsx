@@ -16,7 +16,7 @@ import {
   listenForImage,
   updateCollection,
 } from "../../services/firebase";
-import { Footer } from "../Footer";
+import { Footer } from "../../components/Footer";
 import { StyledCollection, StyledCollectionEditor } from "./styles";
 
 export const Collection: React.FC = () => {

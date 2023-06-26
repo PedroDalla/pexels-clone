@@ -23,7 +23,6 @@ export const StyledPhotoView = styled.div`
     font-weight: 500;
     font-size: 16px;
     color: #000;
-    outline: none;
     background: white;
     border: 1px solid;
     display: flex;
@@ -166,7 +165,6 @@ export const StyledPhotoView = styled.div`
           color: #7f7f7f;
           background: transparent;
           border: none;
-          outline: none;
           font-weight: 600;
           padding: 0;
 
@@ -302,7 +300,6 @@ export const StyledPhotoView = styled.div`
       text-decoration: none;
 
       border: none;
-      outline: none;
 
       > svg {
         margin-right: 5px;

@@ -38,7 +38,6 @@ export const StyledNavAuth = styled.nav<{
     > a {
       background: ${({ type }) => (type == "dark" ? "white" : "#e8e8e8")};
       border: 0;
-      outline: 0;
       border-radius: 4px;
       padding: 0.5rem 1.5rem;
       transition: 0.2s ease;
