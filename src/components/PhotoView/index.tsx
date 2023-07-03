@@ -68,6 +68,7 @@ export const PhotoView: React.FC<PhotoViewProps> = ({ content }) => {
   const mouseMoveWrapper = useRef<(event: MouseEvent) => void>();
 
   const handleZoom = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.stopPropagation();
     const child = e.currentTarget.firstChild;
     let image: HTMLImageElement | null = null;
     if (child && child instanceof HTMLImageElement) {
@@ -130,14 +131,14 @@ export const PhotoView: React.FC<PhotoViewProps> = ({ content }) => {
         <div id="author-info" className="hide-mobile">
           <div id="author-image">
             {photographer && photographer.photoURL ? (
-              <Link to={`/profile:${photographer.uid}`}>
+              <Link to={`/profile/${photographer.uid}`}>
                 <img
                   alt="user"
                   src={photographer.photoURL}
                   referrerPolicy="no-referrer"></img>
               </Link>
             ) : photographer ? (
-              <Link to={`/profile:${photographer.uid}`}>
+              <Link to={`/profile/${photographer.uid}`}>
                 <IoPersonCircle size="54px" />
               </Link>
             ) : (

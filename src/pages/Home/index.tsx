@@ -72,11 +72,7 @@ export function Home() {
         return;
       }
       fetchImagesPaginated(10, lastPaginationIndex).then((val: IPhoto[]) => {
-        if (images.length) {
-          setImages((images) => [...images, ...val]);
-        } else {
-          setImages(val);
-        }
+        setLastImageBatch(val);
         setFetching(false);
       });
       setFetching(true);

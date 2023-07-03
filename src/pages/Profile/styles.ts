@@ -62,6 +62,10 @@ export const StyledProfile = styled.div`
     align-items: center;
     padding: 2px;
 
+    @media (max-width: 400px) {
+      flex-direction: column;
+    }
+
     a {
       text-decoration: none;
     }
@@ -84,6 +88,10 @@ export const StyledProfile = styled.div`
         transform: translateY(-50%);
         background: #dfdfe0;
         transition: 0.2s ease;
+
+        @media (max-width: 400px) {
+          display: none;
+        }
       }
 
       .statistic-title {

@@ -24,11 +24,14 @@ export const StyledSearchBar = styled.div<{
 
     input {
       min-width: 0;
+      width: 100%;
+      text-overflow: ellipsis;
+
       border: none;
       padding: ${({ navSearchBar }) =>
         navSearchBar ? ".9rem 1.2rem" : "1rem"};
       font-family: "Roboto", sans-serif;
-      font-weight: 400;
+      font-weight: 500;
       font-size: 18px;
 
       appearance: textfield;
@@ -47,6 +50,10 @@ export const StyledSearchBar = styled.div<{
       justify-content: center;
       align-items: center;
       padding: 0 1rem;
+
+      @media (max-width: 400px) {
+        padding: 0 0.5rem;
+      }
 
       &:hover {
         cursor: pointer;

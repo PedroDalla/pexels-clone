@@ -1,10 +1,14 @@
 import { StyledNav } from "./styles";
 import { SearchBar } from "../SearchBar";
-
+import { GiHamburgerMenu } from "react-icons/gi";
 import { Settings } from "../Settings";
 import { Logo } from "../Logo";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { useState } from "react";
+import { MobileMenu } from "../MobileMenu";
+import { createPortal } from "react-dom";
+import { IoMdClose } from "react-icons/io";
 
 interface NavProps {
   searchBarEnabled?: boolean;
@@ -18,14 +22,18 @@ export const Nav = ({
   position,
 }: NavProps): JSX.Element => {
   const auth = useAuth();
+  const [displayMenu, setDisplayMenu] = useState(false);
 
   return (
     <StyledNav
-      transparentBackground={transparentBackground}
+      transparentBackground={transparentBackground && !displayMenu}
+      background={displayMenu ? "black" : "white"}
       position={position}>
       <div id="nav-content">
         <Logo mode="text" />
-        {searchBarEnabled ? <SearchBar navSearchBar></SearchBar> : null}
+        {(searchBarEnabled || displayMenu) && (
+          <SearchBar navSearchBar></SearchBar>
+        )}
         <ul>
           <li id="explore-a-li" className="main-link">
             <Link to="/">Explore</Link>
@@ -50,17 +58,24 @@ export const Nav = ({
               </Link>
             )}
           </li>
-          {/* <li id="collapse-menu-li">
-            <button id="collapse-menu-btn">
-              <GiHamburgerMenu
-                size="22px"
-                color={
-                  transparentBackground ? "white" : "black"
-                }></GiHamburgerMenu>
+          <li id="collapse-menu-li">
+            <button
+              id="collapse-menu-btn"
+              onClick={() => setDisplayMenu((dM) => !dM)}>
+              {displayMenu ? (
+                <IoMdClose size="26px" color="white"></IoMdClose>
+              ) : (
+                <GiHamburgerMenu
+                  size="22px"
+                  color={
+                    transparentBackground ? "white" : "black"
+                  }></GiHamburgerMenu>
+              )}
             </button>
-          </li> */}
+          </li>
         </ul>
       </div>
+      {displayMenu && createPortal(<MobileMenu />, document.body)}
     </StyledNav>
   );
 };

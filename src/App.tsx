@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthContextProvider } from "./contexts/AuthContext";
 import { NotFound } from "./pages/NotFound";
 import { Collection } from "./pages/Collection";
+import { Photo } from "./pages/Photo";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             />
           </Route>
           <Route path="/collection/:uid" element={<Collection />} />
+          <Route path="/photo/:uid" element={<Photo />} />
           <Route path="/upload" element={<Upload />}></Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

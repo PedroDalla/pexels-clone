@@ -166,7 +166,7 @@ const CollectionEditor: React.FC<{
 
   const deleteCol = async () => {
     try {
-      await deleteCollection(collection.uid);
+      await deleteCollection(collection.uid, collection.authorUID);
       navigate(`/profile/${collection.authorUID}`);
     } catch (err) {
       console.error("Failed to delete the collection!");

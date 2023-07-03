@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const StyledNav = styled.nav<{
   transparentBackground?: boolean;
+  background?: string;
   position?: "fixed" | "static";
 }>`
   width: 100%;
@@ -16,8 +17,8 @@ export const StyledNav = styled.nav<{
   z-index: 10;
   user-select: none;
 
-  background: ${({ transparentBackground }) =>
-    transparentBackground ? "transparent" : "#fff"};
+  background: ${({ transparentBackground, background }) =>
+    transparentBackground ? "transparent" : background ? background : "#fff"};
 
   #nav-content {
     max-width: 1550px;
@@ -108,7 +109,8 @@ export const StyledNav = styled.nav<{
       @media (max-width: 1000px) {
         #explore-a-li,
         #license-a-li,
-        #about-a-li {
+        #about-a-li,
+        #auth-li {
           display: none;
         }
       }
@@ -122,10 +124,7 @@ export const StyledNav = styled.nav<{
 
         #collapse-menu-li {
           display: flex;
-        }
-
-        li {
-          margin-right: 1rem;
+          margin: 0;
         }
       }
     }

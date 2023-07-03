@@ -39,6 +39,7 @@ export const Gallery: React.FC<GalleryProps> = ({ images, onScroll }) => {
   }, [images, columnCount]);
 
   function hidePhotoView() {
+    window.history.replaceState(null, "", `/`);
     setIndex(null);
   }
 

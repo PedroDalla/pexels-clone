@@ -94,13 +94,25 @@ export async function fetchUserCollections(userUID: string) {
   }
 }
 
-export async function deleteCollection(collectionUID: string) {
-  const reference = ref(db, `collections/${collectionUID}`);
-  try {
-    remove(reference);
-  } catch (err) {
-    console.error(err);
-    throw new Error("Error deleting collection!");
+export async function deleteCollection(collectionUID: string, userUID: string) {
+  const collectionReference = ref(db, `collections/${collectionUID}`);
+  const collections = await fetchUserCollections(userUID);
+  const parsedCollections = Object.keys(collections);
+  const index = parsedCollections.findIndex(
+    (key) => collections[key].uid === collectionUID
+  );
+  if (index != -1) {
+    const userColRef = ref(
+      db,
+      `users/${userUID}/collections/${parsedCollections[index]}`
+    );
+    try {
+      remove(userColRef);
+      remove(collectionReference);
+    } catch (err) {
+      console.error(err);
+      throw new Error("Error deleting collection!");
+    }
   }
 }
 

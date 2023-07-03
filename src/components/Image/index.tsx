@@ -56,6 +56,7 @@ export const Image: FC<ImageProps> = ({ imageInfo, setIndex }) => {
       <StyledImage
         tabIndex={0}
         onClick={() => {
+          window.history.replaceState(null, "", `photo/${imageInfo.uid}`);
           setIndex();
         }}>
         <img
