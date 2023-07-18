@@ -38,6 +38,11 @@ export const StyledSearchBar = styled.div<{
       flex: 1;
       background: transparent;
       vertical-align: middle;
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0px 16px #0005;
+      }
       @media (max-width: 600px) {
         font-size: 14px;
       }

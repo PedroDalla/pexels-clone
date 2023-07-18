@@ -41,7 +41,7 @@ export const StyledCollectionsModal = styled.div`
     width: 100%;
 
     @media (max-width: 650px) {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 50% 50%;
     }
 
     .user-collection {
@@ -61,6 +61,7 @@ export const StyledCollectionsModal = styled.div`
           width: 100%;
           border-radius: 10px;
           max-height: 100%;
+          object-fit: cover;
         }
 
         .empty-collection-image {
@@ -147,6 +148,10 @@ export const StyledNewCollectionModal = styled.div`
   align-items: center;
   font-family: "Plus Jakarta Sans";
   width: 450px;
+
+  @media (max-width: 520px) {
+    width: auto;
+  }
 
   #modal-title {
     text-align: center;
